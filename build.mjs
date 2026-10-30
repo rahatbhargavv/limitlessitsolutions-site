@@ -24,7 +24,7 @@ function layout({url,title,desc,h1,body,noindex,schema,cur}){
 ${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>':""}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site"><div class="wrap bar"><a class="brand" href="/">Limitless <span>IT Solutions</span></a>
-<div class="actions"><a class="phone" href="tel:${tel}" aria-label="Call us">&#9742; ${phoneHtml}</a><a class="btn" href="/contact/#quote">Get a Quote</a></div>
+<div class="actions"><a class="phone" href="tel:${tel}">&#9742; ${phoneHtml}</a><a class="btn" href="/contact/#quote">Get a Quote</a></div>
 <nav class="main" aria-label="Main"><details><summary>Menu</summary><ul>${nav.map(n=>`<li><a href="${n[0]}"${n[0]===cur?' aria-current="page"':""}>${n[1]}</a></li>`).join("")}</ul></details></nav></div></header>
 <main id="main">${body}</main>
 <footer class="site"><div class="wrap cols"><div><strong>${C.name}</strong><br>Serving ${area} and surrounding areas<br>Phone: <a href="tel:${tel}">${phoneHtml}</a><br>Email: <a href="mailto:${C.email}">${C.email}</a><br>Hours: ${ph(C.hours)}</div>
