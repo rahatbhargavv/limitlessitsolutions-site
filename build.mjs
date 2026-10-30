@@ -1,5 +1,5 @@
 import fs from "node:fs";import path from "node:path";
-import C from "./site.config.mjs";import {services,blog} from "./content.mjs";
+import C from "./site.config.mjs";import {services,blog,catalog,roadmap} from "./content.mjs";
 const OUT="dist";fs.rmSync(OUT,{recursive:true,force:true});
 const area=`${C.city}, ${C.region}`;
 const isPh=v=>typeof v==="string"&&v.trim().startsWith("[");
@@ -20,19 +20,19 @@ function layout({url,title,desc,h1,body,noindex,schema,cur}){
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${full}">${noindex?'<meta name="robots" content="noindex,nofollow">':""}
 <meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${full}"><meta property="og:site_name" content="${C.name}"><meta property="og:locale" content="en_CA">
-<meta name="theme-color" content="#0b2545"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/style.css">
+<meta name="theme-color" content="#0b2545"><link rel="preload" href="/assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/style.css">
 ${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>':""}</head><body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a><div class="prog" aria-hidden="true"></div><div class="cur" aria-hidden="true"></div>
 <header class="site"><div class="wrap bar"><a class="brand" href="/">Limitless <span>IT Solutions</span></a>
 <div class="actions"><a class="phone" href="tel:${tel}">&#9742; ${phoneHtml}</a><a class="btn" href="/contact/#quote">Get a Quote</a></div>
 <nav class="main" aria-label="Main"><details><summary>Menu</summary><ul>${nav.map(n=>`<li><a href="${n[0]}"${n[0]===cur?' aria-current="page"':""}>${n[1]}</a></li>`).join("")}</ul></details></nav></div></header>
 <main id="main">${body}</main>
-<footer class="site"><div class="wrap cols"><div><strong>${C.name}</strong><br>Serving ${area} and surrounding areas<br>Phone: <a href="tel:${tel}">${phoneHtml}</a><br>Email: <a href="mailto:${C.email}">${C.email}</a><br>Hours: ${ph(C.hours)}</div>
+<footer class="site"><div class="wrap"><p class="big">Tech that<br>just works.</p></div><div class="wrap cols"><div><strong>${C.name}</strong><br>Serving ${area} and surrounding areas<br>Phone: <a href="tel:${tel}">${phoneHtml}</a><br>Email: <a href="mailto:${C.email}">${C.email}</a><br>Hours: ${ph(C.hours)}</div>
 <div><strong>Services</strong><br>${visible.map(s=>`<a href="/${s.slug}/">${s.nav}</a>`).join("<br>")}<br><a href="/support-plans/">Tech Checkup</a></div>
 <div><strong>Company</strong><br><a href="/about/">About</a><br><a href="/faq/">FAQ</a><br><a href="/blog/">Helpful guides</a><br><a href="/privacy/">Privacy Policy</a><br><a href="/terms/">Terms</a></div></div>
 <div class="wrap"><p>&copy; ${new Date().getFullYear()} ${C.name}. Owner-operated.</p></div></footer>
 ${C.ga4Id?'<div id="cookie" class="cookie" role="dialog" aria-label="Cookie notice"><p>We use Google Analytics cookies to see which pages help visitors. Allow them? See our <a href="/privacy/">Privacy Policy</a>.</p><button class="btn" data-yes>Allow</button> <button class="btn alt" data-no>No thanks</button></div>':""}
-<script>window.SITE=${JSON.stringify({ga4Id:C.ga4Id,web3formsKey:C.web3formsKey,responseTime:C.responseTime,phone:C.phone,phoneTel:tel,email:C.email})};</script><script src="/assets/site.js" defer></script></body></html>`;
+<script>window.SITE=${JSON.stringify({ga4Id:C.ga4Id,web3formsKey:C.web3formsKey,responseTime:C.responseTime,phone:C.phone,phoneTel:tel,email:C.email})};</script><script src="/assets/site.js" defer></script><script src="/assets/fx.js" defer></script></body></html>`;
 }
 const faqBlock=f=>f.map(([q,a])=>`<details class="faq"><summary>${md(q)}</summary><p>${md(a)}</p></details>`).join("");
 const cta=`<div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div>`;
@@ -42,31 +42,42 @@ const localBiz={"@context":"https://schema.org","@type":"ProfessionalService","n
  "hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":visible.map(s=>({"@type":"Offer","itemOffered":{"@type":"Service","name":s.short}}))}};
 
 // HOME
-const icons={"wifi-networking":"\u{1F4F6}","security-cameras":"\u{1F4F9}","computer-help":"\u{1F4BB}"};
+const glows=["rgba(90,209,255,.28)","rgba(138,123,255,.30)","rgba(255,200,87,.22)"];
+const total=catalog.reduce((n,c)=>n+c.now.length,0);
+const chipList=(arr,cls="")=>'<ul class="chips '+cls+'">'+arr.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>';
 write("index.html",layout({url:"/",cur:"/",title:`IT Help for Homes & Small Businesses in ${area} | ${C.name}`,
- desc:`Wi-Fi setup, security cameras and computer help for homes and small businesses in ${area}. Honest quotes, tidy work. Get a quote today.`,schema:localBiz,
- body:`<section class="hero"><div class="orb" aria-hidden="true"></div><div class="wrap"><span class="pill"><i></i> New &middot; owner-operated &middot; serving ${area}</span>
- <h1>Your tech,<br><em>sorted.</em></h1>
- <p class="lead">Wi-Fi that reaches every room. Cameras you can watch from your phone. Computers that just work. Friendly, tidy IT help for homes and small businesses.</p>
- <div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div></div></section>
- <div class="marq" aria-hidden="true"><div>${Array(4).fill('Wi-Fi<span>&#9670;</span>Security cameras<span>&#9670;</span>Computer help<span>&#9670;</span>Setup &amp; repair<span>&#9670;</span>Data transfer<span>&#9670;</span>').join("")}</div></div>
- <section><div class="wrap"><span class="eyebrow rv">01 &mdash; What we do</span><h2 class="rv">Three things, <em>done properly.</em></h2>
- <div class="rows rv">${visible.map((s,i)=>`<a class="row" href="/${s.slug}/"><span class="n">0${i+1}</span><h3>${s.nav}</h3><p>${s.promise}</p><span class="go">Learn more &rarr;</span></a>`).join("")}</div>
- <p class="rv" style="margin-top:1.5rem;color:var(--mut)">Coming soon: Microsoft 365 / Google Workspace setup, small websites, monthly support plans, POS installs and smart home. <a href="/services/">See all services</a>.</p></div></section>
- <section class="soft"><div class="wrap"><span class="eyebrow rv">02 &mdash; How it works</span><h2 class="rv">Three steps. <em>No jargon.</em></h2>
- <ol class="steps rv"><li><strong>Tell us what you need.</strong><br>A short form or a quick call.</li><li><strong>Get an honest quote.</strong><br>Plain language, before any work starts.</li><li><strong>We get it done.</strong><br>Tidy work, then follow-up support.</li></ol></div></section>
- <section><div class="wrap"><span class="eyebrow rv">03 &mdash; Why choose us</span><h2 class="rv">Small on purpose. <em>Accountable by design.</em></h2>
- <div class="grid rv"><div class="card"><span class="ic">&#128205;</span><h3>Local</h3><p>Based in ${area}, serving homes and small businesses nearby.</p></div><div class="card"><span class="ic">&#129489;</span><h3>One accountable person</h3><p>The same person from quote to finish.</p></div><div class="card"><span class="ic">&#10024;</span><h3>Tidy installs</h3><p>Clean cable runs, neat setup, and we clean up after ourselves.</p></div><div class="card"><span class="ic">&#129534;</span><h3>Honest quotes</h3><p>You know what is included before we start.</p></div></div></div></section>
- ${C.reviews.length?`<section class="soft"><div class="wrap"><h2>What customers say</h2><div class="grid">${C.reviews.map(r=>`<blockquote class="card">&ldquo;${esc(r.quote)}&rdquo;<br><strong>${esc(r.name)}</strong></blockquote>`).join("")}</div></div></section>`:""}
- <section class="soft"><div class="wrap"><span class="eyebrow rv">04 &mdash; Where we work</span><h2 class="rv">Based in ${area}. <em>Serving up to ${C.radiusKm} km.</em></h2><p class="lead rv">Not sure we cover your area? <a href="/contact/">Just ask</a>.</p></div></section>
- <section><div class="wrap"><div class="band rv"><span class="eyebrow">Ready when you are</span><h2>Tell us what's not working. <em>We'll sort it.</em></h2><div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div></div></div></section>`}));
+ desc:`Wi-Fi, security cameras, computer help and small-business tech in ${area}. Honest quotes, tidy work. Get a quote today.`,schema:localBiz,
+ body:`<section class="hero hero-xl"><canvas id="liquid" aria-hidden="true"></canvas><div class="wrap">
+  <h1>Tech that<br><em>just works.</em></h1>
+  <p class="lead" style="color:#d7e0ee">Wi-Fi, security cameras and computer help for homes and small businesses in ${area}. Honest quotes. Tidy work.</p>
+  <div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div>
+  <div class="hero-meta"><span><i class="dot"></i>New &middot; owner-operated</span><span>${area}</span><span>Scroll &darr;</span></div></div></section>
+ <div class="marq" aria-hidden="true"><div>${Array(3).fill("Wi-Fi<span>&#9670;</span>Cameras<span>&#9670;</span>Computers<span>&#9670;</span>Home tech<span>&#9670;</span>Small business<span>&#9670;</span>Setup &amp; repair<span>&#9670;</span>").join("")}</div></div>
+ <section class="manifesto" id="manifesto"><div class="wrap"><span class="eyebrow">01 / Manifesto</span>
+  <p>One person. One standard. We set it up properly, explain it plainly, and stand behind the work.</p>
+  <p class="lead rv">Local, owner-operated and new. That means you deal with the same person from quote to finish, with no call centre and no jargon.</p></div></section>
+ <section class="soft" id="svc"><div class="wrap"><span class="eyebrow rv">02 / Services</span><h2 class="rv">What we <em>do.</em></h2>
+  <p class="lead rv">${total}+ jobs across six areas. Here are the main ones.</p>
+  <div class="stack" style="margin-top:2.5rem">${catalog.slice(0,3).map((c,i)=>`<article class="scard" style="--i:${i};--glow:${glows[i]}"><div><span class="no">${c.n} / ${esc(c.id)}</span><h3>${c.title}</h3><p>${c.blurb}</p><p style="margin-top:1rem"><a class="go" href="/${c.page}/">See the service &rarr;</a></p></div><div>${chipList(c.now.slice(0,9))}</div></article>`).join("")}</div>
+  <p class="rv" style="margin-top:1rem"><a class="btn alt" href="/services/">Browse every service</a></p></div></section>
+ <section id="process"><div class="wrap"><span class="eyebrow rv">03 / Process</span><h2 class="rv">Three steps. <em>No jargon.</em></h2>
+  <ol class="steps rv"><li><strong>Tell us what you need.</strong><br>A short form or a quick call.</li><li><strong>Get an honest quote.</strong><br>Plain language, before any work starts.</li><li><strong>We get it done.</strong><br>Tidy work, then follow-up support.</li></ol></div></section>
+ <section class="soft"><div class="wrap"><span class="eyebrow rv">04 / Why us</span><h2 class="rv">Small on purpose. <em>Accountable by design.</em></h2>
+  <div class="grid rv"><div class="card"><span class="ic">A</span><h3>Local</h3><p>Based in ${area}, serving homes and small businesses nearby.</p></div><div class="card"><span class="ic">B</span><h3>One accountable person</h3><p>The same person from quote to finish.</p></div><div class="card"><span class="ic">C</span><h3>Tidy installs</h3><p>Clean cable runs, neat setup, and we clean up after ourselves.</p></div><div class="card"><span class="ic">D</span><h3>Honest quotes</h3><p>You know what is included before we start.</p></div></div></div></section>
+ ${C.reviews.length?`<section><div class="wrap"><h2>What customers say</h2><div class="grid">${C.reviews.map(r=>`<blockquote class="card">&ldquo;${esc(r.quote)}&rdquo;<br><strong>${esc(r.name)}</strong></blockquote>`).join("")}</div></div></section>`:""}
+ <section><div class="wrap"><span class="eyebrow rv">05 / Coverage</span><h2 class="rv">Based in ${C.city}. <em>Up to ${C.radiusKm} km.</em></h2><p class="lead rv">Not sure we cover your area? <a href="/contact/">Just ask</a>.</p></div></section>
+ <section class="soft" id="cta"><div class="wrap"><div class="band rv"><span class="eyebrow">Ready when you are</span><h2>Tell us what&rsquo;s not working.</h2><div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div></div></div></section>`}));
 
-// SERVICES OVERVIEW
-write("services/index.html",layout({url:"/services/",cur:"/services/",title:`IT Services for Homes & Small Businesses | ${area}`,desc:`Wi-Fi and networking, security cameras and computer help in ${area}. See what we offer and request a quote.`,
- body:`<section class="hero"><div class="wrap"><h1>Our services in ${area}</h1><p class="lead">Four core services for homes and small businesses.</p><div class="grid">${visible.map(s=>`<div class="card"><h2 style="font-size:1.25rem">${s.nav}</h2><p>${s.promise}</p><a class="more" href="/${s.slug}/">Details &rarr;</a></div>`).join("")}</div>
- <h2 style="margin-top:2rem">Coming soon</h2><ul class="tick"><li>Microsoft 365 / Google Workspace setup</li><li>Small websites</li><li>Monthly support plans</li><li>POS installs</li><li>Smart home</li></ul>${cta}</div></section>`}));
+// SERVICES OVERVIEW (filterable catalog)
+write("services/index.html",layout({url:"/services/",cur:"/services/",title:`All IT Services for Homes & Small Businesses | ${area}`,desc:`Every service we offer in ${area}: Wi-Fi and networking, security cameras, computers, home tech and small-business IT.`,
+ body:`<section class="hero"><div class="wrap"><span class="eyebrow">Services</span><h1>Everything we <em>fix &amp; install.</em></h1><p class="lead">Pick an area to filter. Items marked <strong>Coming soon</strong> are on the way and not yet available.</p>${cta}</div></section>
+ <section style="padding-top:2rem"><div class="wrap"><div class="tabs" role="group" aria-label="Filter services"><button class="tab" type="button" data-f="all" aria-pressed="true">All</button>${catalog.map(c=>`<button class="tab" type="button" data-f="${c.id}" aria-pressed="false">${c.title}</button>`).join("")}</div>
+ ${catalog.map(c=>`<div class="cat" id="${c.id}"><div class="cat-head"><span class="no">${c.n}</span><h2>${c.title}</h2><p>${c.blurb}${c.page!=="contact"?` <a href="/${c.page}/">Learn more &rarr;</a>`:""}</p></div><span class="lbl">Available now</span>${chipList(c.now)}${c.soon.length?`<span class="lbl">Coming soon</span>${chipList(c.soon,"soon")}`:""}</div>`).join("")}
+ <div class="cat"><div class="cat-head"><span class="no">+</span><h2>On the roadmap</h2><p>Not offered yet. Ask if you are interested.</p></div>${chipList(roadmap,"soon")}</div>
+ ${cta}</div></section>`}));
 
 // SERVICE PAGES
+const catFor={"wifi-networking":"wifi","security-cameras":"cameras","computer-help":"computers"};
 for(const s of services){
  write(`${s.slug}/index.html`,layout({url:"/"+s.slug+"/",cur:"/"+s.slug+"/",title:s.title,desc:s.desc,noindex:s.hidden,
  schema:s.hidden?null:{"@context":"https://schema.org","@type":"Service","name":s.short,"provider":{"@type":"ProfessionalService","name":C.name,"url":C.url},"areaServed":area},
@@ -74,7 +85,7 @@ for(const s of services){
  <p class="crumbs"><a href="/">Home</a> / <a href="/services/">Services</a> / ${s.nav}</p><h1>${s.h1}</h1><p class="lead">${s.promise}</p>${cta}</div></section>
  <section class="soft"><div class="wrap"><h2>What's included</h2><ul class="tick">${s.included.map(i=>`<li>${i}</li>`).join("")}</ul></div></section>
  <section><div class="wrap"><h2>How it works</h2><ol class="steps">${s.steps.map(t=>`<li>${t}</li>`).join("")}</ol></div></section>
- <section class="soft"><div class="wrap"><h2>Typical timeline</h2><p>Many small jobs fit into one visit. Larger jobs take longer. We confirm timing in your quote. <span class="ph">[CONFIRM TYPICAL TIMELINE]</span></p>
+ ${catFor[s.slug]?`<section><div class="wrap"><h2>Everything we cover</h2>${chipList(catalog.find(c=>c.id===catFor[s.slug]).now)}</div></section>`:""}<section class="soft"><div class="wrap"><h2>Typical timeline</h2><p>Many small jobs fit into one visit. Larger jobs take longer. We confirm timing in your quote. <span class="ph">[CONFIRM TYPICAL TIMELINE]</span></p>
  <h2>Warranty</h2><p>${ph(C.warranty)}</p></div></section>
  <section><div class="wrap"><h2>Questions</h2>${faqBlock(s.faqs)}${cta}</div></section>`}));
 }

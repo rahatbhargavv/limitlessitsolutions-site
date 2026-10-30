@@ -54,3 +54,26 @@ export const blog = [
    desc:"Questions to ask before hiring a local IT person for your home or small business.",
    body:["Hiring someone to work on your computers or network means giving them access to your private information. Ask these questions first.","**Ask for a clear quote.** A good provider explains what is included before starting. Be cautious about vague or open-ended pricing.","**Ask who will do the work.** You should know exactly who is coming to your home or business.","**Ask about warranty or follow-up.** What happens if the problem comes back? Get the answer in writing.","**Ask about your data.** Will they back up your files first? How will they handle passwords and private information?","**Do not rely on claims you cannot check.** If someone says they are certified, licensed or insured, it is fair to ask for proof.","**Look for plain language.** You should understand what is being done and why. Good help does not hide behind jargon.","**Get notes afterwards.** Ask for a summary of what was changed, and keep any passwords somewhere safe.","**Trust your gut.** If you feel rushed or pressured, step back.","We are a new, owner-operated business serving "+area+". We would rather earn your trust with a clear quote and tidy work than make big promises. Ask for a quote and ask us anything on this list."] }
 ];
+
+// Curated from the owner's master list. "now" = offered at launch. "soon" = roadmap (needs licence check, extra tools or more capacity).
+export const catalog = [
+ { id:"wifi", n:"01", title:"Wi-Fi & Networking", page:"wifi-networking", blurb:"Fast, steady, secure networks for homes and small offices.",
+   now:["Wi-Fi installation","Router installation","Mesh Wi-Fi installation","Network switch installation","Whole-home Wi-Fi optimization","Dead-zone elimination","Home network setup","Office Wi-Fi setup","Internet troubleshooting","Wi-Fi troubleshooting","Router & modem troubleshooting","Network troubleshooting","Network performance testing","Wi-Fi security configuration","Home network security","Parental control setup","Gaming network setup","Firewall configuration","VPN setup","Network documentation","Cable labeling & rack tidy-up"],
+   soon:["Fiber optic work","Structured cabling","VLAN design for larger sites","Multi-location networks"] },
+ { id:"cameras", n:"02", title:"Security Cameras", page:"security-cameras", blurb:"Plan, install and phone-ready camera systems, about 2 to 8 cameras.",
+   now:["Security camera installation","CCTV installation","IP camera installation","Doorbell camera installation","Video doorbell configuration","Business CCTV setup","Rental-property camera setup","Cloud-based surveillance setup","NVR / DVR troubleshooting","Camera repair & troubleshooting","Camera relocation","Camera system health checks"],
+   soon:["Alarm systems","Access control","Video intercom","Smart locks"] },
+ { id:"computers", n:"03", title:"Computers & Laptops", page:"computer-help", blurb:"Setup, repair, upgrades and safe data transfer.",
+   now:["Computer setup","Laptop setup","Computer & laptop repair","Computer troubleshooting","Software troubleshooting","SSD upgrades","RAM upgrades","Operating system installation","Windows installation","macOS setup","Software installation","Virus & malware removal","Data migration","Backup setup","Data recovery (best effort)","Computer maintenance","Printer installation & troubleshooting","Email setup","Cloud storage setup","Password manager setup","Multi-factor authentication setup","Remote IT support","On-site IT support"],
+   soon:["Desktop assembly to order","Server & NAS installation"] },
+ { id:"home", n:"04", title:"Home Tech Help", page:"contact", blurb:"The everyday devices that never quite connect.",
+   now:["Home office setup","Smart TV configuration","Streaming device setup","Smart speaker setup","Home backup system setup","Network storage setup","Technology training for seniors","Home technology training","Home technology consultation","TV wall mounting"],
+   soon:["Smart home hub & automation","Smart thermostat & lighting","Multi-room audio","Home theatre & projector"] },
+ { id:"business", n:"05", title:"Small Business Tech", page:"contact", blurb:"Dependable tech for shops, clinics and small offices.",
+   now:["Small business IT support","Office network setup","Retail & restaurant Wi-Fi","Employee computer setup","Video conferencing setup","Business data backup","Basic cybersecurity setup","Employee security awareness","Business technology consulting","Equipment relocation","Technology audits"],
+   soon:["POS installs & configuration","Barcode, receipt printer & payment terminals","Business phone / VoIP","Microsoft 365 & Google Workspace setup","CRM & booking software setup"] },
+ { id:"plans", n:"06", title:"Checkups & Support Plans", page:"support-plans", blurb:"Keep it all healthy with a yearly visit.",
+   now:["Annual Tech Checkup"],
+   soon:["Monthly IT support plans","Monthly network & Wi-Fi maintenance","Monthly CCTV maintenance","Backup monitoring","Annual technology upgrade planning"] }
+];
+export const roadmap = ["Small websites","Local SEO & Google Business setup","Online store setup","Workflow automation","Branding & graphic design","Drone & photo/video work"];
