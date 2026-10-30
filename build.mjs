@@ -42,27 +42,35 @@ const localBiz={"@context":"https://schema.org","@type":"ProfessionalService","n
  "hasOfferCatalog":{"@type":"OfferCatalog","name":"Services","itemListElement":visible.map(s=>({"@type":"Offer","itemOffered":{"@type":"Service","name":s.short}}))}};
 
 // HOME
+const icons={"wifi-networking":"\u{1F4F6}","security-cameras":"\u{1F4F9}","computer-help":"\u{1F4BB}"};
 write("index.html",layout({url:"/",cur:"/",title:`IT Help for Homes & Small Businesses in ${area} | ${C.name}`,
  desc:`Wi-Fi setup, security cameras and computer help for homes and small businesses in ${area}. Honest quotes, tidy work. Get a quote today.`,schema:localBiz,
- body:`<section><div class="wrap"><span class="badge">New, owner-operated, local</span><h1>Reliable Wi-Fi, cameras and computer help in ${area}</h1>
- <p class="lead">Fast, tidy and friendly IT help for homes and very small businesses. Tell us what you need and get an honest quote.</p>${cta}</div></section>
- <section class="soft"><div class="wrap"><h2>What we do</h2><div class="grid">${visible.map(s=>`<div class="card"><h3>${s.nav}</h3><p>${s.short}.</p><a class="more" href="/${s.slug}/">Learn more &rarr;</a></div>`).join("")}</div>
- <p>Also coming soon: Microsoft 365 / Google Workspace setup, small websites, monthly support plans, POS installs and smart home. See <a href="/services/">all services</a>.</p></div></section>
- <section><div class="wrap"><h2>How it works</h2><ol class="steps"><li><strong>Tell us what you need.</strong><br>Fill in a short form or call.</li><li><strong>Get an honest quote.</strong><br>We explain it in plain language.</li><li><strong>We get it done.</strong><br>Tidy work and follow-up support.</li></ol></div></section>
- <section class="soft"><div class="wrap"><h2>Why choose us</h2><div class="grid"><div class="card"><h3>Local</h3><p>Based in ${area}, serving homes and small businesses nearby.</p></div><div class="card"><h3>One accountable person</h3><p>You deal with the same person from quote to finish.</p></div><div class="card"><h3>Tidy installs</h3><p>Clean cable runs, neat setup, and we clean up after ourselves.</p></div><div class="card"><h3>Honest quotes</h3><p>You know what is included before we start.</p></div></div></div></section>
- ${C.reviews.length?`<section><div class="wrap"><h2>What customers say</h2><div class="grid">${C.reviews.map(r=>`<blockquote class="card">&ldquo;${esc(r.quote)}&rdquo;<br><strong>${esc(r.name)}</strong></blockquote>`).join("")}</div></div></section>`:""}
- <section><div class="wrap"><h2>Where we work</h2><p>We serve ${area} and nearby areas, up to about ${C.radiusKm} km. Not sure if we cover you? <a href="/contact/">Ask us</a>.</p>${cta}</div></section>`}));
+ body:`<section class="hero"><div class="orb" aria-hidden="true"></div><div class="wrap"><span class="pill"><i></i> New &middot; owner-operated &middot; serving ${area}</span>
+ <h1>Your tech,<br><em>sorted.</em></h1>
+ <p class="lead">Wi-Fi that reaches every room. Cameras you can watch from your phone. Computers that just work. Friendly, tidy IT help for homes and small businesses.</p>
+ <div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div></div></section>
+ <div class="marq" aria-hidden="true"><div>${Array(4).fill('Wi-Fi<span>&#9670;</span>Security cameras<span>&#9670;</span>Computer help<span>&#9670;</span>Setup &amp; repair<span>&#9670;</span>Data transfer<span>&#9670;</span>').join("")}</div></div>
+ <section><div class="wrap"><span class="eyebrow rv">01 &mdash; What we do</span><h2 class="rv">Three things, <em>done properly.</em></h2>
+ <div class="rows rv">${visible.map((s,i)=>`<a class="row" href="/${s.slug}/"><span class="n">0${i+1}</span><h3>${s.nav}</h3><p>${s.promise}</p><span class="go">Learn more &rarr;</span></a>`).join("")}</div>
+ <p class="rv" style="margin-top:1.5rem;color:var(--mut)">Coming soon: Microsoft 365 / Google Workspace setup, small websites, monthly support plans, POS installs and smart home. <a href="/services/">See all services</a>.</p></div></section>
+ <section class="soft"><div class="wrap"><span class="eyebrow rv">02 &mdash; How it works</span><h2 class="rv">Three steps. <em>No jargon.</em></h2>
+ <ol class="steps rv"><li><strong>Tell us what you need.</strong><br>A short form or a quick call.</li><li><strong>Get an honest quote.</strong><br>Plain language, before any work starts.</li><li><strong>We get it done.</strong><br>Tidy work, then follow-up support.</li></ol></div></section>
+ <section><div class="wrap"><span class="eyebrow rv">03 &mdash; Why choose us</span><h2 class="rv">Small on purpose. <em>Accountable by design.</em></h2>
+ <div class="grid rv"><div class="card"><span class="ic">&#128205;</span><h3>Local</h3><p>Based in ${area}, serving homes and small businesses nearby.</p></div><div class="card"><span class="ic">&#129489;</span><h3>One accountable person</h3><p>The same person from quote to finish.</p></div><div class="card"><span class="ic">&#10024;</span><h3>Tidy installs</h3><p>Clean cable runs, neat setup, and we clean up after ourselves.</p></div><div class="card"><span class="ic">&#129534;</span><h3>Honest quotes</h3><p>You know what is included before we start.</p></div></div></div></section>
+ ${C.reviews.length?`<section class="soft"><div class="wrap"><h2>What customers say</h2><div class="grid">${C.reviews.map(r=>`<blockquote class="card">&ldquo;${esc(r.quote)}&rdquo;<br><strong>${esc(r.name)}</strong></blockquote>`).join("")}</div></div></section>`:""}
+ <section class="soft"><div class="wrap"><span class="eyebrow rv">04 &mdash; Where we work</span><h2 class="rv">Based in ${area}. <em>Serving up to ${C.radiusKm} km.</em></h2><p class="lead rv">Not sure we cover your area? <a href="/contact/">Just ask</a>.</p></div></section>
+ <section><div class="wrap"><div class="band rv"><span class="eyebrow">Ready when you are</span><h2>Tell us what's not working. <em>We'll sort it.</em></h2><div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div></div></div></section>`}));
 
 // SERVICES OVERVIEW
 write("services/index.html",layout({url:"/services/",cur:"/services/",title:`IT Services for Homes & Small Businesses | ${area}`,desc:`Wi-Fi and networking, security cameras and computer help in ${area}. See what we offer and request a quote.`,
- body:`<section><div class="wrap"><h1>Our services in ${area}</h1><p class="lead">Four core services for homes and small businesses.</p><div class="grid">${visible.map(s=>`<div class="card"><h2 style="font-size:1.25rem">${s.nav}</h2><p>${s.promise}</p><a class="more" href="/${s.slug}/">Details &rarr;</a></div>`).join("")}</div>
+ body:`<section class="hero"><div class="wrap"><h1>Our services in ${area}</h1><p class="lead">Four core services for homes and small businesses.</p><div class="grid">${visible.map(s=>`<div class="card"><h2 style="font-size:1.25rem">${s.nav}</h2><p>${s.promise}</p><a class="more" href="/${s.slug}/">Details &rarr;</a></div>`).join("")}</div>
  <h2 style="margin-top:2rem">Coming soon</h2><ul class="tick"><li>Microsoft 365 / Google Workspace setup</li><li>Small websites</li><li>Monthly support plans</li><li>POS installs</li><li>Smart home</li></ul>${cta}</div></section>`}));
 
 // SERVICE PAGES
 for(const s of services){
  write(`${s.slug}/index.html`,layout({url:"/"+s.slug+"/",cur:"/"+s.slug+"/",title:s.title,desc:s.desc,noindex:s.hidden,
  schema:s.hidden?null:{"@context":"https://schema.org","@type":"Service","name":s.short,"provider":{"@type":"ProfessionalService","name":C.name,"url":C.url},"areaServed":area},
- body:`<section><div class="wrap">${s.hidden?'<div class="note"><strong>HIDDEN PAGE.</strong> Not linked, not in the sitemap, noindex. Do not publish until licensing is confirmed in writing. [LICENSING CONFIRMATION]</div>':""}
+ body:`<section class="hero"><div class="wrap">${s.hidden?'<div class="note"><strong>HIDDEN PAGE.</strong> Not linked, not in the sitemap, noindex. Do not publish until licensing is confirmed in writing. [LICENSING CONFIRMATION]</div>':""}
  <p class="crumbs"><a href="/">Home</a> / <a href="/services/">Services</a> / ${s.nav}</p><h1>${s.h1}</h1><p class="lead">${s.promise}</p>${cta}</div></section>
  <section class="soft"><div class="wrap"><h2>What's included</h2><ul class="tick">${s.included.map(i=>`<li>${i}</li>`).join("")}</ul></div></section>
  <section><div class="wrap"><h2>How it works</h2><ol class="steps">${s.steps.map(t=>`<li>${t}</li>`).join("")}</ol></div></section>
@@ -79,7 +87,7 @@ write("support-plans/index.html",layout({url:"/support-plans/",cur:"/support-pla
 
 // ABOUT
 write("about/index.html",layout({url:"/about/",cur:"/about/",title:`About ${C.name} | ${area}`,desc:`${C.name} is a new, owner-operated IT services business in ${area}.`,
- body:`<section><div class="wrap"><h1>About ${C.name}</h1><p class="lead">A new, owner-operated IT services business serving homes and small businesses in ${area}.</p>
+ body:`<section class="hero"><div class="wrap"><h1>About ${C.name}</h1><p class="lead">A new, owner-operated IT services business serving homes and small businesses in ${area}.</p>
  <p>${md(C.aboutMe)}</p><p>Our promise: plain language, tidy work and honest quotes.</p><div class="note">TODO: add company story, and a real photo or logo. [ABOUT ME]</div>${cta}</div></section>`}));
 
 // FAQ
@@ -90,7 +98,7 @@ write("faq/index.html",layout({url:"/faq/",cur:"/faq/",title:`FAQ | ${C.name} | 
 
 // CONTACT
 write("contact/index.html",layout({url:"/contact/",cur:"/contact/",title:`Get a Quote or Book | ${C.name} | ${area}`,desc:`Request a quote or book IT help in ${area}. Takes about a minute.`,
- body:`<section><div class="wrap"><h1>Get a quote</h1><p class="lead">Two quick steps. Prefer to talk? Call <a href="tel:${tel}">${phoneHtml}</a> or email <a href="mailto:${C.email}">${C.email}</a>.</p>
+ body:`<section class="hero"><div class="wrap"><h1>Get a quote</h1><p class="lead">Two quick steps. Prefer to talk? Call <a href="tel:${tel}">${phoneHtml}</a> or email <a href="mailto:${C.email}">${C.email}</a>.</p>
  <div id="quote"><div id="result" hidden tabindex="-1"></div>
  <form id="quote-form" novalidate>
   <div id="step1"><p><strong>Step 1 of 2</strong></p>
