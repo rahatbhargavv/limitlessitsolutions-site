@@ -63,7 +63,7 @@
       ev('form_submit',{need:checked('need'),urgency:checked('urgency')});
       f.hidden=true;out.hidden=false;
       var t=checked('urgency')==='Today';
-      out.innerHTML='<div class="thanks" role="status"><p class="big">Thank you, '+esc(v('name').split(' ')[0])+'.</p><p>We got your request and will respond '+esc(C.responseTime)+'. A confirmation will be sent to '+esc(v('email'))+'.</p>'+
+      out.innerHTML='<div class="thanks" role="status"><p class="big">Thank you, '+esc(v('name').split(' ')[0])+'.</p><p>We got your request and will respond '+esc(C.responseTime)+'.</p>'+
         (t?'<p class="big">Need it today? Call <a href="tel:'+esc(C.phoneTel)+'">'+esc(C.phone)+'</a> now.</p>':'')+'</div>';
       out.focus();
     }).catch(function(){
