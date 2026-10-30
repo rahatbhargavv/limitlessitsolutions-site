@@ -6,9 +6,9 @@ export default {
   city: "Toronto",
   region: "Ontario",
   radiusKm: 500,
-  phone: "[PHONE]",          // e.g. "416-555-0123"  (digits and dashes)
+  phone: "437-974-1444",          // e.g. "416-555-0123"  (digits and dashes)
   email: "rahat.bhargav19@outlook.com",
-  hours: "[HOURS]",
+  hours: "Available any time",
   responseTime: "as soon as possible",
   warranty: "[WARRANTY TERMS]",
   checkup: "[TECH CHECKUP SCOPE/PRICE]",

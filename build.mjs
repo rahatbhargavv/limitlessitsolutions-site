@@ -83,7 +83,7 @@ write("about/index.html",layout({url:"/about/",cur:"/about/",title:`About ${C.na
  <p>${md(C.aboutMe)}</p><p>Our promise: plain language, tidy work and honest quotes.</p><div class="note">TODO: add company story, and a real photo or logo. [ABOUT ME]</div>${cta}</div></section>`}));
 
 // FAQ
-const generalFaq=[["Who do you work for?","Homes and very small businesses such as shops, clinics and small offices."],["Where do you work?",`${area} and nearby areas, up to about ${C.radiusKm} km.`],["How do I get a quote?","Use the quote form or call. We reply ${C.responseTime}."],["Do you charge for quotes?","[CONFIRM QUOTE POLICY]"],["Do you offer 24/7 support?","No. Please see our hours. Hours: "+C.hours]];
+const generalFaq=[["Who do you work for?","Homes and very small businesses such as shops, clinics and small offices."],["Where do you work?",`${area} and nearby areas, up to about ${C.radiusKm} km.`],["How do I get a quote?","Use the quote form or call. We reply ${C.responseTime}."],["Do you charge for quotes?","[CONFIRM QUOTE POLICY]"],["When can I reach you?","Our hours: "+C.hours+". Call or send a quote request and we will respond ${C.responseTime}."]];
 write("faq/index.html",layout({url:"/faq/",cur:"/faq/",title:`FAQ | ${C.name} | ${area}`,desc:`Answers to common questions about ${C.name}.`,
  schema:{"@context":"https://schema.org","@type":"FAQPage","mainEntity":generalFaq.filter(f=>!/\[/.test(f[1])).map(([q,a])=>({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a.replace("${C.responseTime}",C.responseTime)}}))},
  body:`<section><div class="wrap"><h1>Frequently asked questions</h1>${faqBlock(generalFaq).replace("\${C.responseTime}",C.responseTime)}${cta}</div></section>`}));
