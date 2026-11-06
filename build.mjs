@@ -159,3 +159,19 @@ import crypto from "node:crypto";
 {const walk2=d=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk2(p);else if(p.endsWith("index.html")){const rel="/"+path.relative(OUT,p).replace(/index\.html$/,"");
  const th=/wifi|network/.test(rel)?"rs":/camera|security/.test(rel)?"rs rs-cam":/computer-help|checkup/.test(rel)?"rs rs-code":null;
  if(th&&!rel.includes("blog")){let h=fs.readFileSync(p,"utf8");if(!h.includes("dashsec")){const i=h.indexOf('<section class="hero"');if(i>=0){const j=h.indexOf("</section>",i);if(j>=0){h=h.slice(0,j+10)+'<section class="dashsec '+th+'" aria-hidden="true"></section>'+h.slice(j+10);fs.writeFileSync(p,h)}}}}}}};walk2(OUT)}
+
+/* service map */
+{const cities=[["Mississauga",300,285,"l"],["Brampton",270,185,"l"],["Vaughan",360,170,"r"],["Markham",470,180,"r"],["Scarborough",500,250,"r"],["Pickering",590,235,"r"],["Oakville",225,320,"l"],["Hamilton",130,362,"r"],["Richmond Hill",420,138,"r"]];
+const svg='<svg viewBox="0 0 800 420" role="img" aria-label="Illustrative map of the Greater Toronto Area with Toronto at the centre and nearby cities marked">'+
+ '<g>'+[100,200,300,400,500,600,700].map(x=>'<line class="grid" x1="'+x+'" y1="0" x2="'+x+'" y2="420"/>').join('')+[70,140,210,280,350].map(y=>'<line class="grid" x1="0" y1="'+y+'" x2="800" y2="'+y+'"/>').join('')+'</g>'+
+ '<path class="lake" d="M0 420V392C60 384 110 376 150 360C190 345 225 332 262 316C300 300 345 284 400 266C450 262 500 262 560 252C640 238 720 225 800 215V420Z"/>'+
+ '<path class="shore" d="M0 392C60 384 110 376 150 360C190 345 225 332 262 316C300 300 345 284 400 266C450 262 500 262 560 252C640 238 720 225 800 215"/>'+
+ '<text x="560" y="350" style="fill:#7df0d6;opacity:.6">Lake Ontario</text>'+
+ '<ellipse class="zone" cx="400" cy="230" rx="230" ry="140"/>'+
+ '<circle class="ring" cx="400" cy="250" r="330"/><circle class="ring" cx="400" cy="250" r="330"/><circle class="ring" cx="400" cy="250" r="330"/>'+
+ cities.map(c=>'<line class="link" x1="400" y1="250" x2="'+c[1]+'" y2="'+c[2]+'"/>').join('')+
+ cities.map(c=>'<circle class="city" cx="'+c[1]+'" cy="'+c[2]+'" r="4.5"/><text x="'+(c[3]==="l"?c[1]-10:c[1]+10)+'" y="'+(c[2]+4)+'" text-anchor="'+(c[3]==="l"?"end":"start")+'">'+c[0]+'</text>').join('')+
+ '<circle class="hqp" cx="400" cy="250" r="8"/><circle class="hq" cx="400" cy="250" r="8"/><text class="hqt" x="400" y="226" text-anchor="middle">Toronto</text></svg>';
+const sec='<section class="mapsec"><div class="wrap"><span class="eyebrow">Where we work</span><h2>Greater Toronto, on site</h2><p>We come to you across Toronto and the surrounding cities. Not sure if you are covered? Ask in the quote form below.</p><div class="mapbox">'+svg+'<p class="mapnote">Illustration, not to scale. Final service area to be confirmed.</p></div></div></section>';
+const pc=path.join(OUT,"contact","index.html");let h=fs.readFileSync(pc,"utf8");
+if(!h.includes("mapsec")){const i=h.indexOf('<section class="hero"');const j=h.indexOf("</section>",i);h=h.slice(0,j+10)+sec+h.slice(j+10);fs.writeFileSync(pc,h)}}
