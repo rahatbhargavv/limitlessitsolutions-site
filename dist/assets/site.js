@@ -26,8 +26,8 @@
   });
   // ---- mobile nav: open by default on wide screens
   var nav=document.querySelector('nav.main details');
-  function fit(){if(!nav)return;if(window.innerWidth>=1480)nav.setAttribute('open','');else nav.removeAttribute('open')}
-  fit();window.addEventListener('resize',fit);
+  var wasWide=null;function fit(){if(!nav)return;var w=window.innerWidth>=1480;if(w===wasWide)return;wasWide=w;if(w)nav.setAttribute('open','');else nav.removeAttribute('open')}
+  fit();document.addEventListener('click',function(e){if(nav&&!nav.contains(e.target)&&window.innerWidth<1480)nav.removeAttribute('open')});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav&&window.innerWidth<1480)nav.removeAttribute('open')});window.addEventListener('resize',fit);
 
   // ---- quote form
   var f=document.getElementById('quote-form');if(!f)return;
