@@ -26,7 +26,7 @@
   });
   // ---- mobile nav: open by default on wide screens
   var nav=document.querySelector('nav.main details');
-  function fit(){if(!nav)return;if(window.innerWidth>=860)nav.setAttribute('open','');else nav.removeAttribute('open')}
+  function fit(){if(!nav)return;if(window.innerWidth>=1480)nav.setAttribute('open','');else nav.removeAttribute('open')}
   fit();window.addEventListener('resize',fit);
 
   // ---- quote form

@@ -21,3 +21,12 @@ It is built at `/cabling/` with noindex and no links. Only after licensing is co
 
 ## Placeholders
 Anything in a yellow `[BRACKET]` box on the site is missing information. See `NEEDS_FROM_OWNER.md`.
+
+## The 3D world (home page background)
+A real-time WebGL landscape drawn by a single shader in `src/assets/world.js`. Scrolling flies the camera forward and runs a full day: sunrise, midday, golden hour, night. The glowing beacon on the island is the "signal" that sends rings across the ground at night.
+- No libraries and no image or video files. Fonts are self-hosted in `src/assets/fonts/`.
+- Quality adapts to the device: it starts low, steps up on fast devices and down on slow ones. If WebGL is unavailable, a plain sky gradient shows instead.
+- Respects "reduce motion": the scene renders as a still frame.
+- Ambient sound is **off** by default; the round button at the bottom right toggles it.
+- Inner pages show the same scene in a short hero, then a plain light content area.
+- To change colours or time-of-day, edit the `mix4(...)` colour lines in the shader text inside `world.js`.

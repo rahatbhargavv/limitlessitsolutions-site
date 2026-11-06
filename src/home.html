@@ -1,11 +1,27 @@
-<section class="hero3"><div class="wrap hero3-grid">
- <div class="hero3-copy">
-  <span class="pill"><i></i> New &middot; owner-operated &middot; {{area}}</span>
-  <h1>Tech that <em>works</em>, the way it <span class="u">should.</span></h1>
-  <p class="lead">Wi-Fi that reaches every room. Cameras you can watch from your phone. Computers that behave. Friendly local help for homes and small businesses.</p>
-  <div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:{{tel}}">Call {{phone}}</a></div>
-  <ul class="creed"><li>Local</li><li>One accountable person</li><li>Tidy installs</li><li>Honest quotes</li></ul>
- </div>
+<div id="stages">
+
+<section class="stage s-hero" id="top"><div class="wrap">
+ <p class="kicker rv">{{city}} &middot; Ontario &middot; Owner-operated</p>
+ <h1 class="title rv">Tech that <em>works,</em><br>the way it should.</h1>
+ <p class="sub rv">Wi-Fi, security cameras and computer help for homes and small businesses.</p>
+ <div class="btns rv"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn ghost" href="tel:{{tel}}">Call {{phone}}</a></div>
+</div><a class="hint" href="#manifesto"><span>Scroll down to discover</span><i></i></a></section>
+
+<section class="stage s-man" id="manifesto"><div class="wrap">
+ <p class="thin rv">One person. One standard. We set it up properly, explain it in plain language, and stand behind the work.</p>
+ <div class="cols2 rv"><p>Local, owner-operated and new. You deal with the same person from your first message to the finished job, with no call centre, no jargon and no surprises.</p><p>Clean cable runs, neat setup, a walkthrough so you know how everything works, and quotes that explain what is included before any work starts.</p></div>
+</div></section>
+
+<section class="stage s-svc" id="services"><div class="wrap">
+ <span class="eyebrow rv">What we do</span><h2 class="h-thin rv">Six areas. <em>{{total}}+ jobs.</em></h2>
+ <div class="bento">{{bento}}</div>
+ <p class="rv" style="margin-top:1.8rem"><a class="btn ghost" href="/services/">Browse every service</a></p>
+</div></section>
+
+<section class="stage s-wifi" id="wifi"><div class="wrap duo">
+ <div><span class="eyebrow rv">Wi-Fi &amp; networking</span><h2 class="h-thin rv">Every room. <em>Covered.</em></h2>
+  <p class="sub rv">Drag the router around the floor plan and watch coverage change. Then add a mesh node to fix the weakest room, the same way we would on site.</p>
+  <div class="btns rv"><a class="btn" href="/wifi-networking/">Wi-Fi &amp; networking</a></div></div>
  <div class="plan" id="plan">
   <div class="plan-top"><span class="eyebrow">Try it &middot; Wi-Fi demo</span><span class="read" id="planRead" aria-hidden="true">&nbsp;</span></div>
   <canvas id="planCv" tabindex="0" role="application" aria-label="Interactive floor plan. Drag the router, or use the arrow keys, to see how Wi-Fi coverage changes from room to room."></canvas>
@@ -13,44 +29,45 @@
    <button type="button" class="chipbtn" data-x="67" data-y="46">Living room</button><button type="button" class="chipbtn" data-x="21" data-y="46">Kitchen</button><button type="button" class="chipbtn" data-x="22" data-y="17">Bedroom</button><button type="button" class="chipbtn" data-x="77" data-y="17">Office</button>
    <button type="button" class="chipbtn" id="meshBtn" aria-pressed="false">+ Add a mesh node</button>
   </div>
-  <p class="fine">Drag the router around the plan. Illustration only: real coverage depends on your walls, building and equipment.</p>
+  <p class="fine">Illustration only. Real coverage depends on your walls, building and equipment.</p>
   <p class="sr" id="planSr" aria-live="polite"></p>
  </div>
 </div></section>
 
-<section id="services"><div class="wrap"><span class="eyebrow rv">What we do</span><h2 class="rv">Six areas. <em>{{total}}+ jobs.</em></h2>
- <p class="lead rv">Everything here is something we can set up, fix or explain in plain language.</p>
- <div class="bento">{{bento}}</div>
- <p class="rv" style="margin-top:1.8rem"><a class="btn alt" href="/services/">Browse every service</a></p></div></section>
-
-<section class="dark" id="cameras"><div class="wrap cams-grid">
- <div><span class="eyebrow rv">Security cameras</span><h2 class="rv">See the whole yard. <em>From your phone.</em></h2>
-  <p class="lead rv">We plan the camera spots first, then install them neatly. Switch cameras on and watch the coverage change.</p>
+<section class="stage s-cams" id="cameras"><div class="wrap duo rev">
+ <div class="plan dk"><canvas id="camCv" aria-label="Top-down plan of a home and yard. Select cameras to see which areas they cover." role="img"></canvas><p class="fine">Illustration only. Real placement depends on your property. Typical systems have about 2 to 8 cameras.</p><p class="sr" id="camSr" aria-live="polite"></p></div>
+ <div><span class="eyebrow rv">Security cameras</span><h2 class="h-thin rv">See the yard. <em>From your phone.</em></h2>
+  <p class="sub rv">We plan camera spots first, then install them neatly. Switch cameras on and see how much of the yard you cover.</p>
   <div class="plan-ctl" id="camBtns" role="group" aria-label="Cameras"><button type="button" class="chipbtn" data-i="0" aria-pressed="true">Front door</button><button type="button" class="chipbtn" data-i="1" aria-pressed="false">Right side</button><button type="button" class="chipbtn" data-i="2" aria-pressed="false">Back door</button><button type="button" class="chipbtn" data-i="3" aria-pressed="false">Left side</button></div>
-  <span class="read" id="camRead" aria-hidden="true">&nbsp;</span>
-  <a class="btn" href="/security-cameras/">Camera installation</a></div>
- <div class="plan"><canvas id="camCv" aria-label="Top-down plan of a home and yard. Select cameras to see which areas they cover." role="img"></canvas><p class="fine">Illustration only. Real camera placement depends on your property. Typical systems have about 2 to 8 cameras.</p><p class="sr" id="camSr" aria-live="polite"></p></div>
+  <span class="read big" id="camRead" aria-hidden="true">&nbsp;</span>
+  <div class="btns"><a class="btn" href="/security-cameras/">Camera installation</a></div></div>
 </div></section>
 
-<section class="dark2 pcs" id="computers"><div class="wrap pcs-grid">
- <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>TECH CHECKUP</span></div><pre id="termOut" aria-hidden="true"></pre><p class="sr">Illustration: a tech checkup turns off unused startup programs, frees disk space, sets up a backup and installs updates.</p></div>
- <div><span class="eyebrow rv">Computers &amp; laptops</span><h2 class="rv">Computers that stop <em>fighting you.</em></h2>
-  <p class="lead rv">New setup, slow or broken machines, safe data transfer and the little annoyances in between.</p>
+<section class="stage s-pcs pcs" id="computers"><div class="wrap duo">
+ <div><span class="eyebrow rv">Computers &amp; laptops</span><h2 class="h-thin rv">Computers that stop <em>fighting you.</em></h2>
+  <p class="sub rv">New setup, slow or broken machines, safe data transfer and the little annoyances in between.</p>
   {{pcchips}}
-  <div class="btns"><a class="btn" href="/computer-help/">Computer help</a><button type="button" class="btn alt" id="termRun">Run the demo again</button></div>
-  <p class="fine" style="color:#a9c2bc">Illustration only. Your results will differ.</p></div>
+  <div class="btns"><a class="btn" href="/computer-help/">Computer help</a><button type="button" class="btn ghost" id="termRun">Run the demo again</button></div></div>
+ <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>TECH CHECKUP</span></div><pre id="termOut" aria-hidden="true"></pre><p class="sr">Illustration: a tech checkup turns off unused startup programs, frees disk space, sets up a backup and installs updates.</p><p class="fine" style="padding:0 1.1rem 1rem">Illustration only. Your results will differ.</p></div>
 </div></section>
 
-<section id="process"><div class="wrap"><span class="eyebrow rv">How it works</span><h2 class="rv">Three steps. <em>No jargon.</em></h2>
+<section class="stage s-proc" id="process"><div class="wrap">
+ <span class="eyebrow rv">How it works</span><h2 class="h-thin rv">Three steps. <em>No jargon.</em></h2>
  <div class="tl"><div class="tl-line"><div class="tl-fill"></div></div><ol>
   <li class="rv"><span class="num">1</span><h3>Tell us what you need</h3><p>A short form or a quick call. Photos help, but are optional.</p></li>
   <li class="rv"><span class="num">2</span><h3>Get an honest quote</h3><p>In plain language, with what is included, before any work starts.</p></li>
   <li class="rv"><span class="num">3</span><h3>We get it done</h3><p>Tidy work, a walkthrough so you know how it works, and follow-up support.</p></li>
- </ol></div></div></section>
+ </ol></div>
+</div></section>
 
 {{reviews}}
 
-<section class="soft" id="cta"><div class="wrap"><div class="band rv"><span class="eyebrow">Based in {{city}} &middot; serving up to {{radius}} km</span><h2>Tell us what&rsquo;s not working.</h2>
- <a class="bigtel" href="tel:{{tel}}">{{phone}}</a>
- <div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a></div>
- <p class="fine">Not sure we cover your area? <a href="/contact/">Just ask</a>.</p></div></div></section>
+<section class="stage s-cta" id="cta"><div class="wrap">
+ <span class="eyebrow rv">Based in {{city}} &middot; serving up to {{radius}} km</span>
+ <h2 class="h-thin rv">Tell us what&rsquo;s <em>not working.</em></h2>
+ <a class="bigtel rv" href="tel:{{tel}}">{{phone}}</a>
+ <div class="btns rv"><a class="btn" href="/contact/#quote">Get a Quote</a></div>
+ <p class="fine rv">Not sure we cover your area? <a href="/contact/">Just ask</a>.</p>
+</div></section>
+
+</div>

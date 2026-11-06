@@ -20,9 +20,9 @@ function layout({url,title,desc,h1,body,noindex,schema,cur}){
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${full}">${noindex?'<meta name="robots" content="noindex,nofollow">':""}
 <meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${full}"><meta property="og:site_name" content="${C.name}"><meta property="og:locale" content="en_CA">
-<meta name="theme-color" content="#f3eee4"><link rel="preload" href="/assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/hanken.woff2" as="font" type="font/woff2" crossorigin><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/style.css">
-${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>':""}</head><body>
-<a class="skip" href="#main">Skip to content</a><div class="prog" aria-hidden="true"></div>
+<meta name="theme-color" content="#0a1a20"><link rel="preload" href="/assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/hanken.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/jost.woff2" as="font" type="font/woff2" crossorigin><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/style.css"><noscript><style>.pre{display:none}</style></noscript>
+${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>':""}</head><body class="${url==="/"?"home":"inner"}">
+<a class="skip" href="#main">Skip to content</a><div class="pre" aria-hidden="true"><span class="pre-n">0</span><span class="pre-l">Limitless IT Solutions</span></div><canvas id="world" aria-hidden="true"></canvas><canvas id="motes" aria-hidden="true"></canvas><div class="veil" aria-hidden="true"></div><div class="prog" aria-hidden="true"></div>
 <header class="site"><div class="wrap bar"><a class="brand" href="/">Limitless <span>IT Solutions</span></a>
 <div class="actions"><a class="phone" href="tel:${tel}">&#9742; ${phoneHtml}</a><a class="btn" href="/contact/#quote">Get a Quote</a></div>
 <nav class="main" aria-label="Main"><details><summary>Menu</summary><ul>${nav.map(n=>`<li><a href="${n[0]}"${n[0]===cur?' aria-current="page"':""}>${n[1]}</a></li>`).join("")}</ul></details></nav></div></header>
@@ -32,7 +32,7 @@ ${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>
 <div><strong>Company</strong><br><a href="/about/">About</a><br><a href="/faq/">FAQ</a><br><a href="/blog/">Helpful guides</a><br><a href="/privacy/">Privacy Policy</a><br><a href="/terms/">Terms</a></div></div>
 <div class="wrap"><p>&copy; ${new Date().getFullYear()} ${C.name}. Owner-operated.</p></div></footer>
 ${C.ga4Id?'<div id="cookie" class="cookie" role="dialog" aria-label="Cookie notice"><p>We use Google Analytics cookies to see which pages help visitors. Allow them? See our <a href="/privacy/">Privacy Policy</a>.</p><button class="btn" data-yes>Allow</button> <button class="btn alt" data-no>No thanks</button></div>':""}
-<script>window.SITE=${JSON.stringify({ga4Id:C.ga4Id,web3formsKey:C.web3formsKey,responseTime:C.responseTime,phone:C.phone,phoneTel:tel,email:C.email})};</script><script src="/assets/site.js" defer></script><script src="/assets/fx.js" defer></script></body></html>`;
+<script>window.SITE=${JSON.stringify({ga4Id:C.ga4Id,web3formsKey:C.web3formsKey,responseTime:C.responseTime,phone:C.phone,phoneTel:tel,email:C.email})};</script><script src="/assets/site.js" defer></script><button type="button" class="snd" id="snd" aria-pressed="false" aria-label="Toggle ambient sound"><i></i></button><script src="/assets/fx.js" defer></script><script src="/assets/world.js" defer></script></body></html>`;
 }
 const faqBlock=f=>f.map(([q,a])=>`<details class="faq"><summary>${md(q)}</summary><p>${md(a)}</p></details>`).join("");
 const cta=`<div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div>`;
@@ -46,7 +46,7 @@ const total=catalog.reduce((n,c)=>n+c.now.length,0);
 const chipList=(arr,cls="")=>'<ul class="chips '+cls+'">'+arr.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>';
 const bento=catalog.map((c,i)=>'<article class="tile t'+(i+1)+' rv"><span class="no">0'+(i+1)+'</span><h3>'+c.title+'</h3><p>'+c.blurb+'</p>'+chipList(c.now.slice(0,6))+'<a class="go" href="/services/#'+c.id+'">All '+c.now.length+' &rarr;</a></article>').join("");
 const pcChips=chipList(catalog.find(c=>c.id==="computers").now.slice(0,10));
-const revHtml=C.reviews.length?'<section><div class="wrap"><h2>What customers say</h2><div class="grid">'+C.reviews.map(r=>'<blockquote class="card">&ldquo;'+esc(r.quote)+'&rdquo;<br><strong>'+esc(r.name)+'</strong></blockquote>').join("")+'</div></div></section>':"";
+const revHtml=C.reviews.length?'<section class="stage"><div class="wrap"><h2 class="h-thin">What customers say</h2><div class="grid">'+C.reviews.map(r=>'<blockquote class="card">&ldquo;'+esc(r.quote)+'&rdquo;<br><strong>'+esc(r.name)+'</strong></blockquote>').join("")+'</div></div></section>':"";
 const homeBody=fs.readFileSync("src/home.html","utf8").split("{{area}}").join(area).split("{{city}}").join(esc(C.city)).split("{{radius}}").join(String(C.radiusKm)).split("{{tel}}").join(tel).split("{{phone}}").join(phoneHtml).split("{{total}}").join(String(total)).split("{{bento}}").join(bento).split("{{pcchips}}").join(pcChips).split("{{reviews}}").join(revHtml);
 write("index.html",layout({url:"/",cur:"/",title:"IT Help for Homes & Small Businesses in "+area+" | "+C.name,desc:"Wi-Fi, security cameras, computer help and small-business tech in "+area+". Honest quotes, tidy work. Get a quote today.",schema:localBiz,body:homeBody}));
 
