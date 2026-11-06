@@ -367,3 +367,12 @@ main,.hero.tech{z-index:auto}
 /* menu details must not be treated as a card */
 body.inner nav.main details{overflow:visible!important;position:static!important;transform:none!important}
 body.inner nav.main details::before{display:none!important}
+
+/* wide nav row */
+@media(min-width:1480px){
+ .bar{gap:1rem}
+ nav.main{margin-left:auto;order:2}
+ .bar .actions{order:3;margin-left:0}
+ nav.main ul{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;gap:1.4rem!important;min-width:0!important}
+ nav.main a{padding:.3rem 0!important;white-space:nowrap;font-size:.72rem!important;letter-spacing:.16em!important}
+}
