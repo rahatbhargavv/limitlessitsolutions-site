@@ -1,4 +1,4 @@
-(function(){
+(function(){var go=function(){
 'use strict';
 if(document.body.classList.contains('home'))return;
 var hero=document.querySelector('main .hero');if(!hero)return;
@@ -81,4 +81,4 @@ addEventListener('resize',function(){size();go()});
 size();go();
 // count-up numbers & glow follow on cards
 document.querySelectorAll('.card,.tile,details,.price').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--gx',(e.clientX-r.left)+'px');c.style.setProperty('--gy',(e.clientY-r.top)+'px')},{passive:true})});
-})();
+};if(document.readyState==='complete')setTimeout(go,700);else addEventListener('load',function(){setTimeout(go,700)});})();

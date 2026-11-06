@@ -32,7 +32,7 @@ ${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>
 <div><strong>Company</strong><br><a href="/about/">About</a><br><a href="/faq/">FAQ</a><br><a href="/blog/">Helpful guides</a><br><a href="/privacy/">Privacy Policy</a><br><a href="/terms/">Terms</a></div></div>
 <div class="wrap"><p>&copy; ${new Date().getFullYear()} ${C.name}. Owner-operated.</p></div></footer>
 ${C.ga4Id?'<div id="cookie" class="cookie" role="dialog" aria-label="Cookie notice"><p>We use Google Analytics cookies to see which pages help visitors. Allow them? See our <a href="/privacy/">Privacy Policy</a>.</p><button class="btn" data-yes>Allow</button> <button class="btn alt" data-no>No thanks</button></div>':""}
-<script>window.SITE=${JSON.stringify({ga4Id:C.ga4Id,web3formsKey:C.web3formsKey,responseTime:C.responseTime,phone:C.phone,phoneTel:tel,email:C.email})};</script><script src="/assets/site.js" defer></script><button type="button" class="snd" id="snd" aria-pressed="false" aria-label="Toggle ambient sound"><i></i></button><script src="/assets/fx.js" defer></script><script src="/assets/world.js" defer></script><script src="/assets/techfx.js" defer></script></body></html>`;
+<script>window.SITE=${JSON.stringify({ga4Id:C.ga4Id,web3formsKey:C.web3formsKey,responseTime:C.responseTime,phone:C.phone,phoneTel:tel,email:C.email})};</script><script src="/assets/site.js" defer></script><button type="button" class="snd" id="snd" aria-pressed="false" aria-label="Toggle ambient sound"><i></i></button><script src="/assets/fx.js" defer></script><script src="/assets/world.js" defer></script><script src="/assets/techfx.js" defer></script><script src="/assets/dash.js" defer></script></body></html>`;
 }
 const faqBlock=f=>f.map(([q,a])=>`<details class="faq"><summary>${md(q)}</summary><p>${md(a)}</p></details>`).join("");
 const cta=`<div class="btns"><a class="btn" href="/contact/#quote">Get a Quote</a><a class="btn alt" href="tel:${tel}">Call ${phoneHtml}</a></div>`;
@@ -152,5 +152,10 @@ console.log("built",pages.length,"indexable pages");
 
 /* cache-bust */
 import crypto from "node:crypto";
-{const hs={};for(const f of ["style.css","fx.js","world.js","site.js","techfx.js"]){const p=path.join(OUT,"assets",f);if(fs.existsSync(p))hs[f]=crypto.createHash("md5").update(fs.readFileSync(p)).digest("hex").slice(0,8)}
+{const hs={};for(const f of ["style.css","fx.js","world.js","site.js","techfx.js","dash.js"]){const p=path.join(OUT,"assets",f);if(fs.existsSync(p))hs[f]=crypto.createHash("md5").update(fs.readFileSync(p)).digest("hex").slice(0,8)}
  const walk=d=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(p.endsWith(".html")){let h=fs.readFileSync(p,"utf8");for(const f in hs)h=h.split("/assets/"+f+'"').join("/assets/"+f+"?v="+hs[f]+'"');fs.writeFileSync(p,h)}}};walk(OUT)}
+
+/* dash placeholder */
+{const walk2=d=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk2(p);else if(p.endsWith("index.html")){const rel="/"+path.relative(OUT,p).replace(/index\.html$/,"");
+ const th=/wifi|network/.test(rel)?"rs":/camera|security/.test(rel)?"rs rs-cam":/computer-help|checkup/.test(rel)?"rs rs-code":null;
+ if(th&&!rel.includes("blog")){let h=fs.readFileSync(p,"utf8");if(!h.includes("dashsec")){const i=h.indexOf('<section class="hero"');if(i>=0){const j=h.indexOf("</section>",i);if(j>=0){h=h.slice(0,j+10)+'<section class="dashsec '+th+'" aria-hidden="true"></section>'+h.slice(j+10);fs.writeFileSync(p,h)}}}}}}};walk2(OUT)}
