@@ -272,3 +272,39 @@ header.site{background:linear-gradient(180deg,rgba(3,14,20,.5),rgba(3,14,20,0));
 
 .stage{text-shadow:0 1px 3px rgba(2,12,18,.55),0 2px 30px rgba(2,12,18,.55)}.cols2 p,.sub{text-shadow:0 1px 3px rgba(2,12,18,.7),0 2px 24px rgba(2,12,18,.6)}
 .hint{z-index:3}
+
+/* ===== TECH LAYER ===== */
+.hero.tech{position:relative;overflow:hidden;isolation:isolate}
+.hero.tech .wrap{position:relative;z-index:2}
+.tfx{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;mix-blend-mode:screen}
+.hero.tech::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(125,240,214,.045) 0 1px,transparent 1px 4px)}
+.hero.tech::after{content:"";position:absolute;left:0;right:0;height:140px;top:-140px;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(125,240,214,.12),transparent);animation:scan 7s linear infinite}
+@keyframes scan{to{transform:translateY(calc(62vh + 280px))}}
+.hud{position:absolute;inset:14px;z-index:3;pointer-events:none;font:500 .68rem var(--jost);letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.hud .c{position:absolute;width:22px;height:22px;border:0 solid var(--aqua);opacity:.85}
+.hud .a{left:0;top:0;border-width:2px 0 0 2px}.hud .b{right:0;top:0;border-width:2px 2px 0 0}.hud .c.c{left:0;bottom:0;border-width:0 0 2px 2px}.hud .d{right:0;bottom:0;border-width:0 2px 2px 0}
+.hud .st{position:absolute;left:34px;bottom:2px;display:flex;align-items:center;gap:.6rem}
+.hud .st b{width:7px;height:7px;border-radius:50%;background:var(--aqua);box-shadow:0 0 10px var(--aqua);animation:blink 1.6s ease-in-out infinite}
+.hud .st em{font-style:normal;color:var(--amber)}
+.hud .rd{position:absolute;right:34px;bottom:2px;color:var(--aqua)}
+@keyframes blink{50%{opacity:.25}}
+body.inner .hero h1{background:linear-gradient(100deg,#fff 40%,#bffcee 50%,#fff 60%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sheen 6s ease-in-out infinite}
+body.inner .hero h1 em{-webkit-text-fill-color:var(--amber)}
+@keyframes sheen{0%,20%{background-position:120% 0}70%,100%{background-position:-60% 0}}
+/* circuit divider under hero */
+body.inner main>section.hero::after{box-shadow:none}
+body.inner main>section:not(.hero):first-of-type{position:relative}
+body.inner main>section:not(.hero):first-of-type::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,transparent,var(--aqua),var(--amber),var(--aqua),transparent);background-size:200% 100%;animation:flow 4s linear infinite;opacity:.9}
+@keyframes flow{to{background-position:200% 0}}
+/* paper sections: faint circuit grid */
+body.inner main>section:not(.hero){background-image:linear-gradient(rgba(11,95,88,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(11,95,88,.05) 1px,transparent 1px);background-size:44px 44px}
+/* cards: tracking glow + corner brackets */
+body.inner .card,body.inner .tile,body.inner details,body.inner .price{position:relative;overflow:hidden;transition:transform .35s,box-shadow .35s,border-color .35s}
+body.inner .card::before,body.inner .tile::before,body.inner details::before,body.inner .price::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(240px circle at var(--gx,50%) var(--gy,50%),rgba(11,143,128,.16),transparent 70%)}
+body.inner .card:hover::before,body.inner .tile:hover::before,body.inner details:hover::before,body.inner .price:hover::before{opacity:1}
+body.inner .card:hover,body.inner .price:hover{transform:translateY(-3px);border-color:#0b8f80;box-shadow:0 18px 36px -22px rgba(6,60,56,.6)}
+body.inner main>section:not(.hero) .eyebrow{position:relative;padding-left:1.4rem}
+body.inner main>section:not(.hero) .eyebrow::before{content:"";position:absolute;left:0;top:50%;width:.7rem;height:.7rem;margin-top:-.35rem;border:2px solid #0b8f80;border-radius:50%;box-shadow:0 0 0 0 rgba(11,143,128,.5);animation:ping 2.2s ease-out infinite}
+@keyframes ping{to{box-shadow:0 0 0 12px rgba(11,143,128,0)}}
+@media(prefers-reduced-motion:reduce){.hero.tech::after,body.inner .hero h1,body.inner main>section:first-of-type::before,.hud .st b,body.inner .eyebrow::before{animation:none}body.inner .hero h1{-webkit-text-fill-color:#fff}}
+@media(max-width:700px){.hud{font-size:.58rem;letter-spacing:.14em}.hud .rd{display:none}}
