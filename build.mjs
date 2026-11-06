@@ -149,3 +149,8 @@ write("sitemap.xml",`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http:/
 write("robots.txt",`User-agent: *\nAllow: /\nSitemap: ${C.url}/sitemap.xml\n`);
 write("_headers",`/*\n  X-Content-Type-Options: nosniff\n  X-Frame-Options: DENY\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Strict-Transport-Security: max-age=31536000; includeSubDomains\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.web3forms.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; form-action 'self' https://api.web3forms.com; base-uri 'self'; frame-ancestors 'none'\n`);
 console.log("built",pages.length,"indexable pages");
+
+/* cache-bust */
+import crypto from "node:crypto";
+{const hs={};for(const f of ["style.css","fx.js","world.js","site.js"]){const p=path.join(OUT,"assets",f);if(fs.existsSync(p))hs[f]=crypto.createHash("md5").update(fs.readFileSync(p)).digest("hex").slice(0,8)}
+ const walk=d=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(p.endsWith(".html")){let h=fs.readFileSync(p,"utf8");for(const f in hs)h=h.split("/assets/"+f+'"').join("/assets/"+f+"?v="+hs[f]+'"');fs.writeFileSync(p,h)}}};walk(OUT)}
