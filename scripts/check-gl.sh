@@ -11,10 +11,10 @@ trap 'kill $SRV 2>/dev/null' EXIT INT TERM
 sleep 1
 FAIL=0
 for u in 0 0.25 0.5 0.75 1; do
-  # virtual time lets the 350 ms delayed start and async shader compile finish; 15 s was flaky on software GL, 40 s is not
+  # virtual time lets the 350 ms delayed start and async shader compile finish; 15 s was flaky on software GL, the shader got heavier, so use 120 s
   DOM=$("$CH" --headless=new --no-sandbox --use-gl=angle --use-angle=swiftshader \
     --enable-unsafe-swiftshader --ignore-gpu-blocklist --window-size=1440,900 \
-    --virtual-time-budget=40000 --dump-dom "http://localhost:$PORT/?u=$u" 2>/dev/null)
+    --virtual-time-budget=120000 --dump-dom "http://localhost:$PORT/?u=$u" 2>/dev/null)
   if echo "$DOM" | grep -q '<html[^>]*glready'; then
     echo "ok   u=$u"
   else

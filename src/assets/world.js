@@ -118,10 +118,10 @@ vec3 terrCol(vec3 p,vec3 n,float t){
  float nz=fb3(p.xz*1.3);float gr=fb3(p.xz*.35);
  float lod=1.-smoothstep(14.,48.,t);
  float wind=sin(T*.9+p.x*.45+p.z*.3)*.35;
- vec3 grass=mix(vec3(.08,.26,.04),vec3(.48,.56,.12),gr);
+ vec3 grass=mix(vec3(.075,.16,.05),vec3(.33,.36,.12),gr);grass=mix(grass,vec3(.16,.25,.07),smoothstep(.4,.7,fb3(p.xz*.8+4.))*.5);
  float bl=vn(p.xz*vec2(26.,9.)+vec2(wind,0.))*.6+vn(p.xz*vec2(70.,24.)+vec2(wind*2.,0.))*.4;
  grass*=.72+.55*mix(.5,bl,lod*.8+.2);
- grass=mix(grass,vec3(.5,.42,.2),smoothstep(.55,.75,fb3(p.xz*.2+9.))*.6);
+ grass=mix(grass,vec3(.42,.35,.19),smoothstep(.5,.72,fb3(p.xz*.2+9.))*.55);
  if(lod>0.){vec2 fg=p.xz*8.;vec2 fid=floor(fg);float fh=hash(fid+4.1);
  float fd=length(fract(fg)-.5-.3*(hash2(fid)-.5));
  float fl=step(.93,fh)*smoothstep(.17,.07,fd)*lod*smoothstep(.55,.9,n.y);
@@ -130,7 +130,7 @@ vec3 terrCol(vec3 p,vec3 n,float t){
  float st=.5+.5*sin(p.y*6.5+nz*4.+fb3(p.xz*.4)*3.);
  vec3 rock=mix(vec3(.30,.26,.23),vec3(.56,.50,.42),nz);
  rock=mix(rock,vec3(.52,.40,.32),st*.35);
- rock*=.85+.3*fb3(p.xz*3.1+p.y);
+ rock*=.85+.3*fb3(p.xz*3.1+p.y);rock*=.78+.4*smoothstep(.35,.65,fb3(vec2(p.x+p.z,p.y)*vec2(2.2,5.)));rock=mix(rock,rock*vec3(.82,.88,1.02),.5);
  float slope=smoothstep(.80,.50,n.y+.08*(2.-p.y*.12));
  vec3 c=mix(grass,rock,slope);
  float forest=smoothstep(.36,.52,fb3(p.xz*.11+2.))*smoothstep(.62,.8,n.y)*smoothstep(.4,1.2,p.y)*(1.-smoothstep(5.,8.,p.y+nz*1.2));
@@ -140,7 +140,7 @@ vec3 terrCol(vec3 p,vec3 n,float t){
  vec3 tcol=vec3(.02,.075,.035)*(.6+.8*nz)*(.8+.5*clamp(dot(n,sunDir),0.,1.));
  c=mix(c,tcol,forest*clamp(td*1.25,0.,1.)*.95);
  float sn=smoothstep(10.2,14.,p.y+nz*2.8)*smoothstep(.45,.82,n.y+.3*nz-.15);
- c=mix(c,vec3(.97,.98,1.)*(.92+.2*nz),sn);
+ c=mix(c,vec3(.9,.93,.98)*(.9+.2*nz),sn);
  c=mix(vec3(.55,.5,.38),c,smoothstep(.0,.35,p.y));
  return c;}
 vec3 lit(vec3 p,vec3 n,vec3 alb){
@@ -194,10 +194,14 @@ void main(){
   col+=vec3(.9,.95,1.)*fo*.22*(.25+sunI*.8*dayK+.25*night);
  } else if(hit>.5){
   tEnd=t;ground=true;vec3 p=ro+rd*t;pp=p;vec3 n=nrm(p,t);
-  col=lit(p,n,terrCol(p,n,t));
+  float dl=1.-smoothstep(25.,70.,t);
+  if(dl>0.){vec2 bq=p.xz*vec2(5.,5.)+p.y*1.7;float b0=fb3(bq),bx=fb3(bq+vec2(.06,0.)),bz=fb3(bq+vec2(0.,.06));
+   float bk=(.55+.9*smoothstep(.9,.55,n.y))*dl;n=normalize(n+vec3(b0-bx,0.,b0-bz)*bk*1.6);}
+  float ae=.7+.04*t;float ao=.5*(H(p.xz+vec2(ae,0.))+H(p.xz-vec2(ae,0.)))-H(p.xz);ao=1.-clamp(ao*.55,0.,.55);
+  col=lit(p,n,terrCol(p,n,t))*mix(1.,ao,.85);
  } else col=sky(rd);
  if(tEnd<1e3){
-  vec3 ext=exp(-tEnd*vec3(.0085,.0068,.0048)*(1.+.6*night));
+  vec3 ext=exp(-tEnd*vec3(.0105,.0085,.0055)*(1.+.6*night));
   vec3 fogC=mix(horCol,topCol,.16)*.92+sunCol*pow(max(dot(rd,sunDir),0.),4.)*.22*sunI;
   col=col*ext+fogC*(1.-ext);
   float mist=exp(-max(pp.y,0.)*.8)*smoothstep(.35,.7,fb3(pp.xz*.14+vec2(T*.02,T*.01)))*(1.-smoothstep(.06,.45,u))*.45*(1.-exp(-tEnd*.1));
@@ -211,10 +215,10 @@ void main(){
   vec2 cp=d2+rd.xz*tc;float dist2=dot(cp,cp);float py=ro.y+rd.y*tc;
   float hh=smoothstep(Bh-.3,Bh+.2,py)*smoothstep(Bh+9.,Bh+2.,py);
   float fall=1./(1.+tc*.015);
-  col+=vec3(.5,1.,.92)*exp(-dist2*2.2)*hh*(.3+1.0*night)*fall;
-  col+=vec3(1.,.82,.5)*exp(-dist2*20.)*hh*(.5+.8*night)*fall;}
+  col+=vec3(.5,1.,.92)*exp(-dist2*2.2)*hh*(.1+.8*night)*fall;
+  col+=vec3(1.,.82,.5)*exp(-dist2*20.)*hh*(.2+.7*night)*fall;}
  col*=1.-.35*dot(q*.5,q*.5);
- col*=1.0;col=(col*(2.51*col+.03))/(col*(2.43*col+.59)+.14);col=pow(clamp(col,0.,1.),vec3(.96));col=mix(vec3(dot(col,vec3(.299,.587,.114))),col,1.22);
+ col*=1.0;col=(col*(2.51*col+.03))/(col*(2.43*col+.59)+.14);col=pow(clamp(col,0.,1.),vec3(.96));col=mix(vec3(dot(col,vec3(.299,.587,.114))),col,1.04);
  col+=(hash(gl_FragCoord.xy+fract(T)*100.)-.5)*.02;
  gl_FragColor=vec4(col,1.);}
 `;
