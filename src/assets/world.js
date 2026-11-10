@@ -135,6 +135,7 @@ vec4 treeL(vec2 xz,float sx,float sy,float zone){
   col=mix(col,vec3(.36,.32,.07),step(.955,hash(id+6.6))*.8);
   col=mix(col,vec3(.5,.22,.06),step(.99,hash(id+7.7)));
   col*=.85+.3*hash(floor(g*3.)+id);}
+ col*=.62+.55*clamp(.5+l.x/(.8*s)*sign(sunDir.x)*-1.2+.2*l.y,0.,1.);
  return vec4(col,cov);}
 vec3 terrCol(vec3 p,vec3 n,float t){
  float nz=fb3(p.xz*1.3);float gr=fb3(p.xz*.35);
@@ -151,8 +152,8 @@ vec3 terrCol(vec3 p,vec3 n,float t){
  grass=mix(grass,fc,fl*.9);}
  float st=.5+.5*sin(p.y*6.5+nz*4.+fb3(p.xz*.4)*3.);
  vec3 rock=mix(vec3(.30,.26,.23),vec3(.56,.50,.42),nz);
- rock=mix(rock,vec3(.52,.40,.32),st*.35);
- rock*=.85+.3*fb3(p.xz*3.1+p.y);rock*=.78+.4*smoothstep(.35,.65,fb3(vec2(p.x+p.z,p.y)*vec2(2.2,5.)));rock=mix(rock,rock*vec3(.82,.88,1.02),.5);
+ rock=mix(rock,vec3(.52,.40,.32),st*.12);
+ rock*=.85+.3*fb3(p.xz*3.1+p.y);vec2 rq=vec2(p.x*.8+p.z*.6,p.y);float wy=p.y*2.2+fb3(rq*.7)*6.5+fb3(rq*3.4)*2.2;float bnd=smoothstep(.3,.7,fract(wy));float jt=smoothstep(.46,.5,fb3(vec2(p.x*1.4+p.z*1.1,p.y*.35)*3.));rock*=.9+.14*bnd;rock*=1.-.22*jt;rock=mix(rock,rock*vec3(.82,.88,1.02),.5);rock=mix(rock,vec3(.55,.37,.26),smoothstep(.55,.8,fb3(rq*1.7+3.))*.35);rock=mix(rock,vec3(.28,.34,.2),smoothstep(.62,.85,fb3(rq*2.3+9.))*.4*smoothstep(.55,.8,n.y));
  float slope=smoothstep(.80,.50,n.y+.08*(2.-p.y*.12));
  vec3 c=mix(grass,rock,slope);
  float forest=smoothstep(.2,.34,fb3(p.xz*.09+2.))*smoothstep(5.,12.,t)*smoothstep(.46,.68,n.y)*smoothstep(.25,1.,p.y)*(1.-smoothstep(6.5,9.5,p.y+nz*1.2));
@@ -171,7 +172,12 @@ vec3 terrCol(vec3 p,vec3 n,float t){
  }
  float sn=smoothstep(10.2,14.,p.y+nz*2.8)*smoothstep(.45,.82,n.y+.3*nz-.15);
  c=mix(c,vec3(.9,.93,.98)*(.9+.2*nz),sn);
- c=mix(vec3(.55,.5,.38),c,smoothstep(.0,.35,p.y));
+ vec3 sand=mix(vec3(.52,.47,.36),vec3(.62,.57,.45),nz);
+ float peb=smoothstep(.62,.7,fb3(p.xz*9.+3.));sand=mix(sand,vec3(.3,.29,.28)*(.7+.6*nz),peb*.8);
+ float wet=smoothstep(.0,.16,p.y);sand*=.55+.45*wet;
+ float reed=smoothstep(.06,.14,p.y)*(1.-smoothstep(.3,.5,p.y))*smoothstep(.45,.62,fb3(p.xz*.9+6.))*step(.5,vn(p.xz*vec2(38.,5.)+wind));
+ sand=mix(sand,vec3(.16,.22,.07)*(.7+.6*vn(p.xz*40.)),reed*.85);
+ c=mix(sand,c,smoothstep(.0,.35,p.y));
  return c;}
 vec3 lit(vec3 p,vec3 n,vec3 alb){
  float dif=clamp(dot(n,sunDir)*.8+.2,0.,1.);float sh=1.;
@@ -179,8 +185,8 @@ vec3 lit(vec3 p,vec3 n,vec3 alb){
  float cs=smoothstep(.5,.74,fb3(p.xz*.045+vec2(T*.02,T*.012)));
  sh*=1.-.5*cs*dayK;
  vec3 amb=mix(horCol,topCol,.5)*(.75+.30*n.y);
- amb+=vec3(.05,.10,.12)*night;
- vec3 moon=vec3(.30,.40,.70)*night*clamp(dot(n,moonDir),0.,1.)*.45;
+ amb+=vec3(.05,.085,.15)*night*(.7+.6*n.y);
+ vec3 moon=vec3(.34,.44,.78)*night*clamp(dot(n,moonDir)*.8+.2,0.,1.)*.7;
  return alb*(sunCol*sunI*dif*sh*1.5+amb+moon);}
 void main(){
  vec2 q=(2.*gl_FragCoord.xy-R)/R.y;
@@ -239,13 +245,13 @@ void main(){
  if(ground){
   float dd=length(pp.xz-B.xz);
   float ring=pow(1.-abs(fract(dd*.16-T*.18)*2.-1.),16.)*exp(-dd*.09);
-  col+=vec3(.4,1.,.9)*ring*(.10+.95*night);}
+  col+=vec3(.4,1.,.9)*ring*(.05+.42*night);}
  vec2 d2=ro.xz-B.xz;float a=dot(rd.xz,rd.xz)+1e-5;float tc=-dot(d2,rd.xz)/a;
  if(tc>0.&&tc<tEnd){
   vec2 cp=d2+rd.xz*tc;float dist2=dot(cp,cp);float py=ro.y+rd.y*tc;
   float hh=smoothstep(Bh-.3,Bh+.2,py)*smoothstep(Bh+9.,Bh+2.,py);
   float fall=1./(1.+tc*.015);
-  col+=vec3(.5,1.,.92)*exp(-dist2*2.2)*hh*(.1+.8*night)*fall;
+  col+=vec3(.5,1.,.92)*exp(-dist2*2.2)*hh*(.1+.6*night)*fall;
   col+=vec3(1.,.82,.5)*exp(-dist2*20.)*hh*(.2+.7*night)*fall;}
  col*=1.-.35*dot(q*.5,q*.5);
  col*=1.0;col=(col*(2.51*col+.03))/(col*(2.43*col+.59)+.14);col=pow(clamp(col,0.,1.),vec3(.96));col=mix(vec3(dot(col,vec3(.299,.587,.114))),col,1.04);
@@ -300,7 +306,7 @@ function frame(now){raf=0;if(!active)return;
  var dt=now-lastNow;lastNow=now;if(dt>0&&dt<400){ft.push(dt);if(ft.length>40){var s=0;for(var i=0;i<ft.length;i++)s+=ft[i];s/=ft.length;ft=[];
    if(warm){warm=false;if(s<22){scale=baseScale;size()}}else if(!HQ&&s>34&&scale>minScale){scale=Math.max(minScale,scale*.84);size()}}}
  mx+=(tx-mx)*.04;my+=(ty-my)*.04;us+=(target-us)*(reduce?1:.075);
- gl.uniform2f(uR,cv.width,cv.height);gl.uniform1f(uT,reduce?10:(now-t0)/1000+10);gl.uniform1f(uU,us);gl.uniform2f(uM,mx,my);gl.uniform1f(uQ,K<1?Q*.8:Q);
+ gl.uniform2f(uR,cv.width,cv.height);gl.uniform1f(uT,reduce?10:(now-t0)/1000+10);gl.uniform1f(uU,us);gl.uniform2f(uM,mx,my);gl.uniform1f(uQ,(K<1||warm)?Q*.75:Q);
  gl.drawArrays(gl.TRIANGLES,0,3);
  if(!firstFrame){firstFrame=true;de.classList.add('glready')}
  var k=Math.max(0,Math.min(1,(us-.55)/.4));drawMotes(now,k);
