@@ -236,10 +236,10 @@ var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.AR
 var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
 var uR=gl.getUniformLocation(pr,'R'),uT=gl.getUniformLocation(pr,'T'),uU=gl.getUniformLocation(pr,'U'),uM=gl.getUniformLocation(pr,'M'),uQ=gl.getUniformLocation(pr,'Q');
 var small=innerWidth<760;
-var HQ=/[?&]hq/.test(location.search);var scale=HQ?1:(small?.6:.8)*Math.min(devicePixelRatio||1,1.25),minScale=small?.4:.5,Q=HQ?100:(small?56:80);
+var HQ=/[?&]hq/.test(location.search);var scale=HQ?1:(small?.85:1)*Math.min(devicePixelRatio||1,1.5),minScale=small?.6:.8,Q=HQ?100:(small?56:80);
 function size(){cv.width=Math.max(2,Math.round(cv.clientWidth*scale));cv.height=Math.max(2,Math.round(cv.clientHeight*scale));gl.viewport(0,0,cv.width,cv.height);
  if(mo){mo.width=innerWidth;mo.height=innerHeight}}
-var baseScale=scale,warm=!HQ;scale=HQ?scale:baseScale*.6;size();addEventListener('resize',function(){small=innerWidth<760;size();wake()});
+var baseScale=scale,warm=!HQ;scale=HQ?scale:baseScale*.85;size();addEventListener('resize',function(){small=innerWidth<760;size();wake()});
 var mx=0,my=0,tx=0,ty=0;
 addEventListener('mousemove',function(e){tx=e.clientX/innerWidth*2-1;ty=1-e.clientY/innerHeight*2},{passive:true});
 var us=0,target=0,vel=0,lastY=scrollY,active=true,raf=0,t0=performance.now(),ft=[],lastNow=0;
