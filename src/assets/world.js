@@ -114,6 +114,28 @@ float march(vec3 ro,vec3 rd,float iq,out float hit){
   if(t>95.)break;}
  if(hit>.5){for(int k=0;k<6;k++){float tm=.5*(tp+t);vec3 pm=ro+rd*tm;if(pm.y<H(pm.xz))t=tm;else tp=tm;}}
  return t;}
+vec4 treeL(vec2 xz,float sx,float sy,float zone){
+ vec2 g=xz*vec2(sx,sy);vec2 id=floor(g);
+ float h=hash(id+1.7),h2=hash(id+8.3);
+ if(h<.22)return vec4(0.);
+ vec2 l=fract(g)-vec2(.5,.1)-vec2(.26,0.)*(hash2(id+8.8)-.5);
+ float s=.7+.5*h2;
+ float cov,k;vec3 col;
+ if(hash(id+3.1)<mix(.12,.96,zone)){
+  float ly=l.y/s;
+  cov=smoothstep(.05,.0,abs(l.x)-(.42-ly)*.38*s)*step(-.08,ly)*step(ly,.8);
+  float tier=.62+.38*step(.5,fract(ly*5.5));
+  col=mix(vec3(.012,.055,.03),vec3(.06,.15,.07),clamp(ly+.15,0.,1.))*tier*(.8+.5*h2);
+  col=mix(col,col*vec3(.8,1.05,1.3),step(.9,hash(id+2.2)));
+ }else{
+  vec2 e=vec2(l.x,(l.y-.34*s)*1.2);float d=length(e)/(.4*s)+(vn(xz*sx*7.+id)-.5)*.5;
+  cov=smoothstep(1.,.78,d)*step(-.04,l.y);
+  k=clamp(.55-e.y*1.3+(h2-.5)*.5,0.,1.)*(1.-.4*d);
+  col=mix(vec3(.04,.12,.025),vec3(.2,.32,.07),k);
+  col=mix(col,vec3(.36,.32,.07),step(.955,hash(id+6.6))*.8);
+  col=mix(col,vec3(.5,.22,.06),step(.99,hash(id+7.7)));
+  col*=.85+.3*hash(floor(g*3.)+id);}
+ return vec4(col,cov);}
 vec3 terrCol(vec3 p,vec3 n,float t){
  float nz=fb3(p.xz*1.3);float gr=fb3(p.xz*.35);
  float lod=1.-smoothstep(14.,48.,t);
@@ -133,12 +155,20 @@ vec3 terrCol(vec3 p,vec3 n,float t){
  rock*=.85+.3*fb3(p.xz*3.1+p.y);rock*=.78+.4*smoothstep(.35,.65,fb3(vec2(p.x+p.z,p.y)*vec2(2.2,5.)));rock=mix(rock,rock*vec3(.82,.88,1.02),.5);
  float slope=smoothstep(.80,.50,n.y+.08*(2.-p.y*.12));
  vec3 c=mix(grass,rock,slope);
- float forest=smoothstep(.36,.52,fb3(p.xz*.11+2.))*smoothstep(.62,.8,n.y)*smoothstep(.4,1.2,p.y)*(1.-smoothstep(5.,8.,p.y+nz*1.2));
- float tt=.5;if(forest>.02&&lod>0.){vec2 tg=p.xz*vec2(7.,5.4);vec2 tid=floor(tg);vec2 tl=fract(tg)-vec2(.5,.12)-vec2(.3,0.)*(hash2(tid+8.8)-.5);
- tt=step(.3,hash(tid))*smoothstep(.04,.0,abs(tl.x)-(.42-tl.y)*.38)*step(-.1,tl.y)*step(tl.y,.78);}
- float td=mix(.62,tt,lod*.8+.2);
- vec3 tcol=vec3(.02,.075,.035)*(.6+.8*nz)*(.8+.5*clamp(dot(n,sunDir),0.,1.));
- c=mix(c,tcol,forest*clamp(td*1.25,0.,1.)*.95);
+ float forest=smoothstep(.2,.34,fb3(p.xz*.09+2.))*smoothstep(5.,12.,t)*smoothstep(.46,.68,n.y)*smoothstep(.25,1.,p.y)*(1.-smoothstep(6.5,9.5,p.y+nz*1.2));
+ forest=min(1.,forest*1.6);
+ if(forest>.02){
+  float zone=clamp(fb3(p.xz*.07+5.)*1.3+p.y*.08-.22,0.,1.);
+  vec3 tcol=mix(vec3(.07,.13,.04),vec3(.02,.075,.04),zone)*(.6+.8*nz)*(.8+.5*clamp(dot(n,sunDir),0.,1.));
+  if(lod>0.){
+   vec3 fc=tcol*.38;float cv=0.;
+   vec4 a=treeL(p.xz,4.8,3.9,zone);fc=mix(fc,a.rgb,a.a);cv=a.a;
+   vec4 b=treeL(p.xz+17.3,9.4,7.4,zone);fc=mix(fc,b.rgb,b.a);cv=max(cv,b.a);
+   fc*=.8+.4*clamp(dot(n,sunDir),0.,1.);
+   c=mix(c,mix(c*.35,fc,cv),forest*(lod*.95+.15*.62));
+   c=mix(c,tcol,forest*(1.-lod)*.62*.95);
+  }else c=mix(c,tcol,forest*.62*.95);
+ }
  float sn=smoothstep(10.2,14.,p.y+nz*2.8)*smoothstep(.45,.82,n.y+.3*nz-.15);
  c=mix(c,vec3(.9,.93,.98)*(.9+.2*nz),sn);
  c=mix(vec3(.55,.5,.38),c,smoothstep(.0,.35,p.y));
@@ -180,7 +210,7 @@ void main(){
   vec3 r=reflect(rd,n);r.y=abs(r.y)+.01;r=normalize(r);
   vec3 refl;float rh;vec3 po=p+vec3(0.,.02,0.);
   float tr=march(po,r,30.,rh);
-  if(rh>.5){vec3 pc=po+r*tr;vec3 nn=nrm(pc,tr);refl=lit(pc,nn,terrCol(pc,nn,tr+tw));refl=mix(refl,horCol,1.-exp(-tr*.02));}
+  if(rh>.5){vec3 pc=po+r*tr;vec3 nn=nrm(pc,tr);refl=lit(pc,nn,terrCol(pc,nn,tr+tw+34.));refl=mix(refl,horCol,1.-exp(-tr*.02));}
   else refl=sky(r);
   float F=.03+.97*pow(1.-clamp(dot(n,-rd),0.,1.),5.);
   float depth=clamp(-H(p.xz),0.,3.);
@@ -241,9 +271,10 @@ var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAt
 var uR=gl.getUniformLocation(pr,'R'),uT=gl.getUniformLocation(pr,'T'),uU=gl.getUniformLocation(pr,'U'),uM=gl.getUniformLocation(pr,'M'),uQ=gl.getUniformLocation(pr,'Q');
 var small=innerWidth<760;
 var HQ=/[?&]hq/.test(location.search);var scale=HQ?1:(small?.85:1)*Math.min(devicePixelRatio||1,1.5),minScale=small?.6:.8,Q=HQ?100:(small?56:80);
-function size(){cv.width=Math.max(2,Math.round(cv.clientWidth*scale));cv.height=Math.max(2,Math.round(cv.clientHeight*scale));gl.viewport(0,0,cv.width,cv.height);
+var K=1,lastScr=-1e5;
+function size(){cv.width=Math.max(2,Math.round(cv.clientWidth*scale*K));cv.height=Math.max(2,Math.round(cv.clientHeight*scale*K));gl.viewport(0,0,cv.width,cv.height);
  if(mo){mo.width=innerWidth;mo.height=innerHeight}}
-var baseScale=scale,warm=!HQ;scale=HQ?scale:baseScale*.85;size();addEventListener('resize',function(){small=innerWidth<760;size();wake()});
+var baseScale=scale,warm=!HQ;scale=HQ?scale:baseScale*.6;size();addEventListener('resize',function(){small=innerWidth<760;size();wake()});
 var mx=0,my=0,tx=0,ty=0;
 addEventListener('mousemove',function(e){tx=e.clientX/innerWidth*2-1;ty=1-e.clientY/innerHeight*2},{passive:true});
 var us=0,target=0,vel=0,lastY=scrollY,active=true,raf=0,t0=performance.now(),ft=[],lastNow=0;
@@ -251,7 +282,7 @@ function worldEnd(){return home&&stages?stages.offsetTop+stages.offsetHeight:inn
 var FU=(location.search.match(/[?&]u=([0-9.]+)/)||[])[1];
 function calcTarget(){var y=scrollY;if(FU!==undefined){target=+FU;active=true;return}if(home&&stages){var m=stages.offsetTop+stages.offsetHeight-innerHeight;target=m>0?Math.max(0,Math.min(1,y/m)):0}else target=.1+.5*Math.min(1,y/innerHeight);
  var vis=y<worldEnd()+60;if(vis&&!active){active=true;wake()}else if(!vis)active=false}
-addEventListener('scroll',function(){var y=scrollY;vel=y-lastY;lastY=y;calcTarget();wake()},{passive:true});
+addEventListener('scroll',function(){lastScr=performance.now();var y=scrollY;vel=y-lastY;lastY=y;calcTarget();wake()},{passive:true});
 // motes
 var N=small?22:44,motes=[];for(var i=0;i<N;i++)motes.push({x:Math.random(),y:Math.random(),z:.25+Math.random()*.75,p:Math.random()*6.28,s:.4+Math.random()});
 function drawMotes(now,k){if(!mctx||reduce)return;var w=mo.width,h=mo.height;mctx.clearRect(0,0,w,h);
@@ -265,10 +296,11 @@ function drawMotes(now,k){if(!mctx||reduce)return;var w=mo.width,h=mo.height;mct
   mctx.fillStyle='rgba('+r+','+g+','+b+','+Math.min(1,a*1.1).toFixed(3)+')';mctx.beginPath();mctx.arc(m.x*w,m.y*h,rad*.62,0,6.283);mctx.fill()}
  vel*=.9}
 function frame(now){raf=0;if(!active)return;
+ var wantK=(now-lastScr<220&&!HQ)?.7:1;if(wantK!==K){K=wantK;size();ft=[]}
  var dt=now-lastNow;lastNow=now;if(dt>0&&dt<400){ft.push(dt);if(ft.length>40){var s=0;for(var i=0;i<ft.length;i++)s+=ft[i];s/=ft.length;ft=[];
    if(warm){warm=false;if(s<22){scale=baseScale;size()}}else if(!HQ&&s>34&&scale>minScale){scale=Math.max(minScale,scale*.84);size()}}}
  mx+=(tx-mx)*.04;my+=(ty-my)*.04;us+=(target-us)*(reduce?1:.075);
- gl.uniform2f(uR,cv.width,cv.height);gl.uniform1f(uT,reduce?10:(now-t0)/1000+10);gl.uniform1f(uU,us);gl.uniform2f(uM,mx,my);gl.uniform1f(uQ,Q);
+ gl.uniform2f(uR,cv.width,cv.height);gl.uniform1f(uT,reduce?10:(now-t0)/1000+10);gl.uniform1f(uU,us);gl.uniform2f(uM,mx,my);gl.uniform1f(uQ,K<1?Q*.8:Q);
  gl.drawArrays(gl.TRIANGLES,0,3);
  if(!firstFrame){firstFrame=true;de.classList.add('glready')}
  var k=Math.max(0,Math.min(1,(us-.55)/.4));drawMotes(now,k);
