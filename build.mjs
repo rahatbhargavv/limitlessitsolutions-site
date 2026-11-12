@@ -12,6 +12,8 @@ const visible=services.filter(s=>!s.hidden);
 const write=(p,html)=>{const f=path.join(OUT,p);fs.mkdirSync(path.dirname(f),{recursive:true});fs.writeFileSync(f,html)};
 const pages=[];
 
+const siteSchema={"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":C.url+"/#website","url":C.url,"name":C.name,"inLanguage":"en-CA","publisher":{"@id":C.url+"/#org"}},{"@type":"Organization","@id":C.url+"/#org","name":C.name,"url":C.url,"email":C.email,"logo":C.url+"/assets/og.png",...(isPh(C.phone)?{}:{"contactPoint":{"@type":"ContactPoint","telephone":"+1"+C.phone.replace(/\D/g,""),"contactType":"customer service","areaServed":"CA-ON","availableLanguage":"English"}})}]};
+const crumbs=(url,name)=>{const parts=url.split("/").filter(Boolean);const items=[{"@type":"ListItem","position":1,"name":"Home","item":C.url+"/"}];let acc="";parts.forEach((p,i)=>{acc+="/"+p;const last=i===parts.length-1;items.push({"@type":"ListItem","position":i+2,"name":last?String(name).replace(/<[^>]+>/g,"").replace(/&amp;/g,"&"):(p==="blog"?"Guides":p),...(last?{}:{"item":C.url+acc+"/"})})});return {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":items}};
 function layout({url,title,desc,h1,body,noindex,schema,cur}){
   const full=C.url+url;
   const nav=[["/services/","Services"],...visible.map(s=>["/"+s.slug+"/",s.nav]),["/support-plans/","Tech Checkup"],["/about/","About"],["/faq/","FAQ"],["/contact/","Contact"]];
@@ -19,9 +21,9 @@ function layout({url,title,desc,h1,body,noindex,schema,cur}){
   return `<!doctype html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${full}">${noindex?'<meta name="robots" content="noindex,nofollow">':""}
-<meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${full}"><meta property="og:site_name" content="${C.name}"><meta property="og:locale" content="en_CA">
+<meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${full}"><meta property="og:site_name" content="${C.name}"><meta property="og:locale" content="en_CA"><meta property="og:image" content="${C.url}/assets/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${C.name}, IT help in ${area}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${C.url}/assets/og.png">
 <meta name="theme-color" content="#0a1a20"><link rel="preload" href="/assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/hanken.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/jost.woff2" as="font" type="font/woff2" crossorigin><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/style.css"><noscript><style>.pre{display:none}</style></noscript>
-${schema?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>':""}</head><body class="${url==="/"?"home":"inner"}">
+${[schema,...(url==="/"?[siteSchema]:[]),(!noindex&&url!=="/")?crumbs(url,h1||title):null].filter(Boolean).map(x=>'<script type="application/ld+json">'+JSON.stringify(x)+'</script>').join("")}</head><body class="${url==="/"?"home":"inner"}">
 <a class="skip" href="#main">Skip to content</a><div class="pre" aria-hidden="true"><span class="pre-n">0</span><span class="pre-l">Limitless IT Solutions</span></div><canvas id="world" aria-hidden="true"></canvas><canvas id="motes" aria-hidden="true"></canvas><div class="veil" aria-hidden="true"></div><div class="prog" aria-hidden="true"></div>
 <header class="site"><div class="wrap bar"><a class="brand" href="/">Limitless <span>IT Solutions</span></a>
 <div class="actions"><a class="phone" href="tel:${tel}">&#9742; ${phoneHtml}</a><a class="btn" href="/contact/#quote">Get a Quote</a></div>
@@ -136,7 +138,7 @@ write("blog/index.html",layout({url:"/blog/",title:`Helpful IT Guides | ${C.name
  body:`<section><div class="wrap"><h1>Helpful guides</h1><div class="grid">${blog.map(b=>`<div class="card"><h2 style="font-size:1.15rem"><a href="/blog/${b.slug}/">${b.title}</a></h2><p>${b.desc}</p></div>`).join("")}</div></div></section>`}));
 for(const b of blog){const s=services.find(x=>x.slug===b.svc);
  write(`blog/${b.slug}/index.html`,layout({url:"/blog/"+b.slug+"/",title:`${b.title} | ${C.name}`,desc:b.desc,
- schema:{"@context":"https://schema.org","@type":"Article","headline":b.title,"author":{"@type":"Organization","name":C.name},"publisher":{"@type":"Organization","name":C.name}},
+ schema:{"@context":"https://schema.org","@type":"Article","headline":b.title,"description":b.desc,"image":C.url+"/assets/og.png","datePublished":new Date().toISOString().slice(0,10),"dateModified":new Date().toISOString().slice(0,10),"inLanguage":"en-CA","mainEntityOfPage":C.url+"/blog/"+b.slug+"/","author":{"@type":"Organization","name":C.name,"url":C.url},"publisher":{"@type":"Organization","name":C.name,"logo":{"@type":"ImageObject","url":C.url+"/assets/og.png"}}},
  body:`<section><div class="wrap post"><p class="crumbs"><a href="/blog/">Guides</a></p><h1>${b.title}</h1>${b.body.map(p=>`<p>${md(p)}</p>`).join("")}
  <p>Related: <a href="/${s.slug}/">${s.nav}</a></p>${cta}</div></section>`}));}
 
@@ -146,6 +148,7 @@ pages.splice(pages.indexOf("/404.html"),1);
 fs.cpSync("src/assets",OUT+"/assets",{recursive:true});
 const today=new Date().toISOString().slice(0,10);
 write("sitemap.xml",`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.map(u=>`<url><loc>${C.url}${u}</loc><lastmod>${today}</lastmod></url>`).join("")}</urlset>`);
+write("llms.txt",`# ${C.name}\n\n> IT help for homes and small businesses in ${area}: Wi-Fi and network setup, security cameras, computer help and tech checkups. Honest quotes, plain language.\n\n## Pages\n${pages.map(u=>"- "+C.url+u).join("\n")}\n\n## Contact\n- Email: ${C.email}\n- Phone: ${C.phone}\n- Service area: ${area}\n`);
 write("robots.txt",`User-agent: *\nAllow: /\nSitemap: ${C.url}/sitemap.xml\n`);
 write("_headers",`/*\n  X-Content-Type-Options: nosniff\n  X-Frame-Options: DENY\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Strict-Transport-Security: max-age=31536000; includeSubDomains\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.web3forms.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; form-action 'self' https://api.web3forms.com; base-uri 'self'; frame-ancestors 'none'\n`);
 console.log("built",pages.length,"indexable pages");
