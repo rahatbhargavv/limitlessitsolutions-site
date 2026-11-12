@@ -3,25 +3,38 @@
 if(document.body.classList.contains('home'))return;
 var hero=document.querySelector('main .hero');if(!hero)return;
 var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-var p=location.pathname,theme='net';
+var p=location.pathname,theme='flow';
 if(/wifi|network/.test(p))theme='wifi';else if(/camera|security/.test(p))theme='cam';else if(/computer|checkup|support/.test(p))theme='code';else if(/contact/.test(p))theme='ping';
 hero.classList.add('tech','t-'+theme);
 var cv=document.createElement('canvas');cv.className='tfx';cv.setAttribute('aria-hidden','true');hero.insertBefore(cv,hero.firstChild);
 var hud=document.createElement('div');hud.className='hud';hud.setAttribute('aria-hidden','true');
-var labels={net:'NODE MAP',wifi:'SIGNAL SCAN',cam:'CAM FEED',code:'DIAGNOSTIC',ping:'LINK TEST'};
+var labels={flow:'DATA FLOW',net:'NODE MAP',wifi:'SIGNAL SCAN',cam:'CAM FEED',code:'DIAGNOSTIC',ping:'LINK TEST'};
 hud.innerHTML='<i class="c a"></i><i class="c b"></i><i class="c c"></i><i class="c d"></i><span class="st"><b></b> '+labels[theme]+' &middot; <em id="hudA">--</em></span><span class="rd" id="hudB"></span>';
 hero.appendChild(hud);
 var hA=hud.querySelector('#hudA'),hB=hud.querySelector('#hudB');
 var ctx=cv.getContext('2d'),W=0,H=0,dpr=Math.min(devicePixelRatio||1,1.5),small=innerWidth<760;
 function size(){var r=hero.getBoundingClientRect();W=Math.max(2,r.width);H=Math.max(2,r.height);cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);init()}
 var AQ='125,240,214',AM='255,210,122';
-var nodes=[],pk=[],drops=[],cols=0,mx=-1,my=-1;
+var nodes=[],pk=[],drops=[],cols=0,mx=-1,my=-1,lanes=[],drip=[];
 function rnd(a,b){return a+Math.random()*(b-a)}
 function init(){
  small=innerWidth<760;
+ if(theme==='flow'){var L=small?26:62;lanes=[];for(var a=0;a<L;a++)lanes.push({o:a/(L-1),sp:rnd(.00006,.00016),ph:Math.random(),ln:rnd(.12,.3),w:rnd(.6,1.5),hot:Math.random()<.18});var V=small?10:22;drip=[];for(var b=0;b<V;b++)drip.push({x:rnd(.05,.98),sp:rnd(.0002,.0005),ph:Math.random(),ln:rnd(.15,.4)})}
  if(theme==='net'||theme==='ping'){var n=small?22:46;nodes=[];for(var i=0;i<n;i++)nodes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-.18,.18),vy:rnd(-.18,.18),r:rnd(1.2,2.8)});pk=[]}
  if(theme==='wifi'){nodes=[];var m=small?5:9;for(var j=0;j<m;j++)nodes.push({x:rnd(W*.1,W*.95),y:rnd(H*.12,H*.88),ph:Math.random()*6,hit:0})}
  if(theme==='code'){cols=Math.ceil(W/(small?22:16));drops=[];for(var k=0;k<cols;k++)drops.push({y:rnd(-10,H/16),s:rnd(.15,.55),l:Math.floor(rnd(8,22))})}
+}
+function flowY(s,o){var k=s<.5?0:(s-.5)/.5;k=k*k*(3-2*k);var spread=(1-.78*s)*.34;return H*(.7+(o-.5)*spread*1.6)-k*H*.5*(1-Math.abs(o-.5)*.6)}
+function flow(t){
+ var N=small?26:44,i,j,l,s,x,y;ctx.lineCap='round';
+ for(i=0;i<lanes.length;i++){l=lanes[i];
+  ctx.strokeStyle='rgba('+AQ+',.14)';ctx.lineWidth=.8;ctx.beginPath();
+  for(j=0;j<=N;j++){s=j/N;x=s*W;y=flowY(s,l.o);if(j)ctx.lineTo(x,y);else ctx.moveTo(x,y)}ctx.stroke();
+  var h=((t*l.sp+l.ph)%1.5)-.25;
+  ctx.strokeStyle='rgba('+(l.hot?AM:'190,245,255')+','+(l.hot?.85:.7)+')';ctx.lineWidth=l.w;ctx.beginPath();var first=true;
+  for(j=0;j<=14;j++){s=h+l.ln*j/14;if(s<0||s>1)continue;x=s*W;y=flowY(s,l.o);if(first){ctx.moveTo(x,y);first=false}else ctx.lineTo(x,y)}ctx.stroke()}
+ ctx.lineWidth=.8;
+ for(i=0;i<drip.length;i++){var d=drip[i],yy=(((t*d.sp+d.ph)%1.4)-.2)*H,x2=d.x*W,g=ctx.createLinearGradient(0,yy-d.ln*H,0,yy);g.addColorStop(0,'rgba('+AQ+',0)');g.addColorStop(1,'rgba(190,245,255,.75)');ctx.strokeStyle=g;ctx.beginPath();ctx.moveTo(x2,yy-d.ln*H);ctx.lineTo(x2,yy);ctx.stroke()}
 }
 var HEX='0123456789ABCDEF<>/{}=+*';
 function net(t){
@@ -69,7 +82,7 @@ function code(t){
 }
 var t0=performance.now(),vis=true,raf=0;
 function frame(now){raf=0;if(!vis)return;var t=Math.max(0,now-t0);ctx.clearRect(0,0,W,H);
- if(theme==='wifi')wifi(t);else if(theme==='cam')cam(t);else if(theme==='code')code(t);else net(t);
+ if(theme==='flow')flow(t);else if(theme==='wifi')wifi(t);else if(theme==='cam')cam(t);else if(theme==='code')code(t);else net(t);
  hA.textContent=(8+Math.round(4+Math.sin(t*.001)*3))+' ms';
  hB.textContent=new Date().toTimeString().slice(0,8);
  if(!reduce)raf=requestAnimationFrame(frame)}
