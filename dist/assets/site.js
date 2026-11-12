@@ -53,6 +53,29 @@
   desc.addEventListener('input',function(){cnt.textContent=desc.value.length+'/300'});
   function err(id,m){var e=document.getElementById(id);if(e)e.textContent=m||''}
   function checked(n){var r=f.querySelector('input[name='+n+']:checked');return r?r.value:''}
+  // field rules, shared by blur/input validation and submit
+  var RULES={
+    description:['e-description','Please describe what you need (5-300 characters).',function(x){return x.length>=5&&x.length<=300}],
+    name:['e-name','Please enter your name.',function(x){return x.length>=2}],
+    phone:['e-phone','Enter a valid phone number.',function(x){return /^[0-9+()\-\s.]{7,20}$/.test(x)}],
+    email:['e-email','Enter a valid email address.',function(x){return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x)}],
+    postal:['e-postal','Enter a Canadian postal code, like M5V 2T6.',function(x){return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(x)}]
+  };
+  function checkField(n,show){
+    var r=RULES[n],el=f.elements[n],good=r[2](el.value.trim());
+    if(show){err(r[0],good?'':r[1]);el.setAttribute('aria-invalid',good?'false':'true')}
+    return good;
+  }
+  Object.keys(RULES).forEach(function(n){
+    var el=f.elements[n];
+    // validate when the user leaves the field, then clear the error the moment it is fixed
+    el.addEventListener('blur',function(){if(el.value.trim()||el.getAttribute('aria-invalid')==='true')checkField(n,true)});
+    el.addEventListener('input',function(){if(el.getAttribute('aria-invalid')==='true'&&checkField(n,false))checkField(n,true)});
+  });
+  ['type','need','urgency'].forEach(function(n){
+    f.querySelectorAll('input[name='+n+']').forEach(function(r){r.addEventListener('change',function(){err('e-'+n)})});
+  });
+  f.elements.consent.addEventListener('change',function(){if(f.elements.consent.checked)err('e-consent')});
   document.getElementById('next').onclick=function(){
     var ok=true;
     ['type','need','urgency'].forEach(function(n){if(!checked(n)){err('e-'+n,'Please choose one.');ok=false}else err('e-'+n)});
@@ -62,22 +85,26 @@
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var v=function(n){return f.elements[n].value.trim()},ok=true;
-    function chk(c,id,m){if(!c){err(id,m);ok=false}else err(id)}
-    chk(v('description').length>=5&&v('description').length<=300,'e-description','Please describe what you need (5-300 characters).');
-    chk(v('name').length>=2,'e-name','Please enter your name.');
-    chk(/^[0-9+()\-\s.]{7,20}$/.test(v('phone')),'e-phone','Enter a valid phone number.');
-    chk(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email')),'e-email','Enter a valid email address.');
-    chk(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(v('postal')),'e-postal','Enter a Canadian postal code, like M5V 2T6.');
-    chk(f.elements.consent.checked,'e-consent','Consent is required so we can reply to you.');
+    Object.keys(RULES).forEach(function(n){if(!checkField(n,true))ok=false});
+    if(!f.elements.consent.checked){err('e-consent','Consent is required so we can reply to you.');ok=false}else err('e-consent');
     if(f.elements.botcheck.checked){return}
-    if(!ok){var first=f.querySelector('.err:not(:empty)');if(first)first.scrollIntoView({block:'center'});return}
+    if(!ok){var bad=f.querySelector('[aria-invalid=true]')||f.elements.consent;bad.focus();bad.scrollIntoView({block:'center'});return}
     var btn=document.getElementById('send');btn.disabled=true;btn.textContent='Sending...';
     var fd=new FormData(f);
     fd.set('access_key',C.web3formsKey);
     fd.set('subject','New quote request: '+checked('need')+' ('+checked('urgency')+')');
     fd.set('from_name','Limitless IT Solutions website');
     fd.set('replyto',v('email'));
-    fetch('https://api.web3forms.com/submit',{method:'POST',body:fd}).then(function(r){return r.json()}).then(function(j){
+    function fallback(){
+      btn.disabled=false;btn.textContent='Send my request';
+      var body='Name: '+v('name')+'\nPhone: '+v('phone')+'\nEmail: '+v('email')+'\nPostal: '+v('postal')+'\nFor: '+checked('type')+' / '+checked('need')+' / '+checked('urgency')+'\n\n'+v('description');
+      var mail='mailto:'+C.email+'?subject='+encodeURIComponent('Quote request: '+checked('need'))+'&body='+encodeURIComponent(body);
+      var e=document.getElementById('e-send');
+      e.innerHTML='Sorry, that did not send. Your answers are still here. Call <a href="tel:'+esc(C.phoneTel)+'">'+esc(C.phone)+'</a> or <a href="'+esc(mail)+'">email us this request</a>.';
+    }
+    if(!C.web3formsKey||C.web3formsKey.charAt(0)==='['){fallback();return}
+    var ctl=window.AbortController?new AbortController():null,timer=setTimeout(function(){if(ctl)ctl.abort()},15000);
+    fetch('https://api.web3forms.com/submit',{method:'POST',body:fd,signal:ctl?ctl.signal:undefined}).then(function(r){clearTimeout(timer);return r.json()}).then(function(j){
       if(!j.success)throw new Error(j.message||'failed');
       ev('form_submit',{need:checked('need'),urgency:checked('urgency')});
       f.hidden=true;out.hidden=false;
@@ -85,10 +112,7 @@
       out.innerHTML='<div class="thanks" role="status"><p class="big">Thank you, '+esc(v('name').split(' ')[0])+'.</p><p>We got your request and will respond '+esc(C.responseTime)+'.</p>'+
         (t?'<p class="big">Need it today? Call <a href="tel:'+esc(C.phoneTel)+'">'+esc(C.phone)+'</a> now.</p>':'')+'</div>';
       out.focus();
-    }).catch(function(){
-      btn.disabled=false;btn.textContent='Send my request';
-      err('e-send','Sorry, that did not send. Please call or email us directly: '+C.phone+' / '+C.email);
-    });
+    }).catch(function(){clearTimeout(timer);fallback()});
   });
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 })();

@@ -30,7 +30,7 @@ Issue format: `What / Expected / Actual / Severity / Environment`.
 ## 3. Open QA issues (2026-11-11)
 | # | Sev | What | Status |
 |---|---|---|---|
-| 1 | Critical | Quote form cannot send: `web3formsKey` is still `[FORM KEY]` (see `DEPLOY.md` step 3) | Needs owner key |
+| 1 | Critical | Quote form cannot send: `web3formsKey` is still `[FORM KEY]` (see `DEPLOY.md` step 3) | Needs owner key. Meanwhile the form falls back to call / prefilled-email link instead of failing silently |
 | 2 | Major | Warranty, tech-checkup scope/price, About text still placeholders | Needs owner content |
 | 3 | Major | Home first load ~2.2 MB (three.js 675 KB, ~1.2 MB textures) | Cached after first visit; first-load slimming not done |
 | 4 | Minor | Mobile two-row header now has a backing; not yet checked visually | Verify at 390px |
