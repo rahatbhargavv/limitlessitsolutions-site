@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120"><rect width="420" height="120" fill="#0b1f1e"/>
+<g transform="translate(20,20)"><rect width="80" height="80" rx="18" fill="#10302e"/>
+<path d="M22 14v38c0 8 5 14 14 14h24" fill="none" stroke="#ff5a26" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M44 40c6-9 18-9 18 0s-12 9-18 0z" fill="none" stroke="#7df0c4" stroke-width="5" stroke-linecap="round" transform="translate(-2,-4)"/></g>
+<text x="118" y="62" font-family="Georgia,serif" font-weight="600" font-size="30" fill="#fff" letter-spacing="-0.5">Limitless</text>
+<text x="119" y="86" font-family="Helvetica,Arial,sans-serif" font-weight="700" font-size="11" fill="#7df0c4" letter-spacing="5">IT SOLUTIONS</text></svg>

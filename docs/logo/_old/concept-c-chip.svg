@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120"><rect width="420" height="120" fill="#0b1f1e"/>
+<g transform="translate(20,20)"><path d="M40 4l32 18v36L40 76 8 58V22z" fill="#10302e" stroke="#7df0c4" stroke-width="3" stroke-linejoin="round"/>
+<path d="M30 22h8v28h16v8H30z" fill="#ff5a26"/><path d="M52 24l8 0" stroke="#7df0c4" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="24" r="4" fill="#7df0c4"/></g>
+<text x="118" y="62" font-family="Georgia,serif" font-weight="600" font-size="30" fill="#fff" letter-spacing="-0.5">Limitless</text>
+<text x="119" y="86" font-family="Helvetica,Arial,sans-serif" font-weight="700" font-size="11" fill="#7df0c4" letter-spacing="5">IT SOLUTIONS</text></svg>

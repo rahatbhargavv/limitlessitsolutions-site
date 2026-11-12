@@ -394,3 +394,6 @@ body.inner nav.main details::before{display:none!important}
 .rail a[aria-current]::after{background:var(--amber,#ffc15a);border-color:var(--amber,#ffc15a);transform:scale(1.4)}
 @media(prefers-reduced-motion:reduce){.rail a::after,.rail a span{transition:none}}
 @media(max-width:480px){.stage .btns .btn{white-space:normal;padding:.9rem 1.1rem;letter-spacing:.1em}.stage .btns{gap:.6rem}}
+
+/* logo */
+.brand{display:flex;align-items:center;line-height:0}.brand img{display:block;height:52px;width:auto}@media(max-width:700px){.brand img{height:40px}}
