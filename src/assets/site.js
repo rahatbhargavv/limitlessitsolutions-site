@@ -29,6 +29,23 @@
   var wasWide=null;function fit(){if(!nav)return;var w=window.innerWidth>=1480;if(w===wasWide)return;wasWide=w;if(w)nav.setAttribute('open','');else nav.removeAttribute('open')}
   fit();document.addEventListener('click',function(e){if(nav&&!nav.contains(e.target)&&window.innerWidth<1480)nav.removeAttribute('open')});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav&&window.innerWidth<1480)nav.removeAttribute('open')});window.addEventListener('resize',fit);
 
+
+  // ---- section rail (home only): dots show where you are and jump between sections
+  (function(){
+    if(!document.body.classList.contains('home'))return;
+    var st=[].slice.call(document.querySelectorAll('.stage[id]'));if(st.length<3)return;
+    var labels={top:'Top',manifesto:'About',services:'Services',wifi:'Wi-Fi',cameras:'Cameras',computers:'Computers',process:'How it works',cta:'Contact'};
+    var nv=document.createElement('nav');nv.className='rail';nv.setAttribute('aria-label','Page sections');
+    nv.innerHTML=st.map(function(s){var l=labels[s.id]||s.id;return '<a href="#'+s.id+'" data-id="'+s.id+'"><span>'+l+'</span></a>'}).join('');
+    document.body.appendChild(nv);
+    var links=[].slice.call(nv.querySelectorAll('a'));
+    function mark(id){links.forEach(function(a){if(a.dataset.id===id)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})}
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)mark(e.target.id)})},{rootMargin:'-45% 0px -45% 0px'});
+      st.forEach(function(s){io.observe(s)});
+    }
+    mark(st[0].id);
+  })();
   // ---- quote form
   var f=document.getElementById('quote-form');if(!f)return;
   var s1=document.getElementById('step1'),s2=document.getElementById('step2'),out=document.getElementById('result');

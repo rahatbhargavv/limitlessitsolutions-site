@@ -376,3 +376,21 @@ body.inner nav.main details::before{display:none!important}
  nav.main ul{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;gap:1.4rem!important;min-width:0!important}
  nav.main a{padding:.3rem 0!important;white-space:nowrap;font-size:.72rem!important;letter-spacing:.16em!important}
 }
+
+/* ---- UX pass: readability scrim, trust strip, section rail, mobile action bar ---- */
+.stage::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 85% 65% at 50% 50%,rgba(3,14,20,.36),rgba(3,14,20,0) 72%)}
+.stage>.wrap,.stage>.hint{position:relative;z-index:1}.stage>.hint{position:absolute}
+.trust{list-style:none;margin:0 0 2.4rem;padding:0;display:grid;gap:.8rem;grid-template-columns:repeat(2,1fr);max-width:56rem}
+@media(min-width:800px){.trust{grid-template-columns:repeat(4,1fr)}}
+.trust li{background:rgba(6,22,28,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:.9rem 1rem;text-shadow:none}
+.trust b{display:block;font:500 1.15rem var(--jost);letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:.2rem}
+.trust span{display:block;font:300 .9rem/1.45 var(--jost);letter-spacing:.04em;color:rgba(255,255,255,.9)}
+.rail{position:fixed;right:1.1rem;top:50%;transform:translateY(-50%);z-index:90;display:none;flex-direction:column;gap:.2rem}
+@media(min-width:1100px){.rail{display:flex}}
+.rail a{display:flex;align-items:center;justify-content:flex-end;gap:.7rem;padding:.4rem .2rem;color:#fff;text-decoration:none;font:500 .68rem var(--jost);letter-spacing:.2em;text-transform:uppercase}
+.rail a::after{content:"";width:9px;height:9px;border-radius:50%;border:1.5px solid #fff;background:transparent;box-shadow:0 0 8px rgba(0,0,0,.5);transition:transform .25s,background .25s}
+.rail a span{opacity:0;transform:translateX(6px);transition:opacity .2s,transform .2s;background:rgba(6,22,28,.75);padding:.2rem .55rem;border-radius:6px;white-space:nowrap}
+.rail a:hover span,.rail a:focus-visible span,.rail a[aria-current] span{opacity:1;transform:none}
+.rail a[aria-current]::after{background:var(--amber,#ffc15a);border-color:var(--amber,#ffc15a);transform:scale(1.4)}
+@media(prefers-reduced-motion:reduce){.rail a::after,.rail a span{transition:none}}
+@media(max-width:480px){.stage .btns .btn{white-space:normal;padding:.9rem 1.1rem;letter-spacing:.1em}.stage .btns{gap:.6rem}}
